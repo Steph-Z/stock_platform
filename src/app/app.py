@@ -6,7 +6,7 @@ from dash import Dash, dcc, html, Input, Output, callback
 from utils.metrics import calculate_volatility
 from utils.plots import plot_stock_chart_line
 from utils.transforms import isin_ticker_to_ticker
-
+from utils.misc import create_navbar
 #Initializing the app
 
 app = Dash()
@@ -14,9 +14,11 @@ app.title = "Stock Dashboard"
 
 #########Color settings
 
-colors = {    'background': '#111111',
-        'input_background': "#7572728A",
-        'text': '#7FDBFF'
+colors = {    'background': "#FFFFFF",
+        'input_background': "#FFFFFFFF", #some input boxes cant handle a different color so white is a kind of given to avoid a lot of custom code (i dont fancy doing css here)
+        'chart_background': "#ffffff",
+        'chart_gridcolor':'#727272',
+        'text': "#000000"
 }
 
 
@@ -51,7 +53,12 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
     dcc.DatePickerRange(
         id= 'Daterange',
         start_date = '2025-08-01',
-        end_date = '2025-09-01'),
+        end_date = '2025-09-01',
+        style={
+        'textAlign': 'center',
+        'color': colors['text'],
+        'backgroundColor': colors['input_background']
+        }),
     #Volatility text
     html.Div(id = 'volatility-custom-timeframe', style = {"fontSize": "20px", "marginTop": "20px"})
 ])
@@ -77,10 +84,12 @@ def update_data_and_plot(ticker):
     fig = plot_stock_chart_line(data = data, ticker = ticker)
     #change colors of the figure to match the layout
     fig.update_layout(
-    plot_bgcolor=colors['background'],
+    plot_bgcolor=colors['chart_background'],
     paper_bgcolor=colors['background'],
-    font_color=colors['text']
-)
+    font_color=colors['text'],
+    xaxis=dict(gridcolor= colors['chart_gridcolor']),  # Set gridline color for x-axis
+    yaxis=dict(gridcolor= colors['chart_gridcolor'])
+    )
    
     return  fig, data.to_dict('records')
 
