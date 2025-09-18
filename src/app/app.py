@@ -12,6 +12,13 @@ from utils.transforms import isin_ticker_to_ticker
 app = Dash()
 app.title = "Stock Dashboard"
 
+#########Color settings
+
+colors = {
+    'background': '#111111',
+    'text': '#7FDBFF'
+}
+
 
 #We have to define the layout now
 
