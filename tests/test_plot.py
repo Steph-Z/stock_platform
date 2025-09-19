@@ -1,15 +1,26 @@
-import yfinance as yf
 import pandas as pd
-import plotly.express as px 
+from plotly.graph_objs import Figure
+from src.utils.diverse import plot_stock_chart_line
+from unittest.mock import patch
 
-from utils.metrics import calculate_volatility
-from utils.plots import plot_stock_chart_line
-from utils.transforms import isin_ticker_to_ticker
 
-ticker = 'AAPL'
-ticker = isin_ticker_to_ticker(ticker)
-    
-data = yf.download(f'{ticker}', period = 'max')
-    
-fig = plot_stock_chart_line(data = data.Close, ticker = ticker)
-fig.show(renderer = 'browser')
+def test_plot_stock_chart_line_returns_figure():
+    # Sample data
+    df = pd.DataFrame({
+        'Date': pd.date_range('2025-08-01', periods=5),
+        'Close': [100, 102, 101, 99, 98]
+    })
+    df.set_index('Date', inplace=True)
+
+    # Mock yfinance.Ticker.info
+    with patch('yfinance.Ticker') as MockTicker:
+        MockTicker.return_value.info = {
+            'currency': 'USD',
+            'displayName': 'Apple Inc.'
+        }
+
+        fig = plot_stock_chart_line(df, 'AAPL')
+
+        assert isinstance(fig, Figure)
+        assert fig.layout.title.text == 'Chart of the Apple Inc. Stock'
+        assert fig.data[0].y.tolist() == [100, 102, 101, 99, 98]

@@ -1,4 +1,5 @@
 import yfinance as yf
+import pandas as pd
 
 def isin_ticker_to_ticker(ticker_isin:str):
     '''checks if the input is a ticker or Isin and returns the isin as a ticker for easy use with yfinance'''
