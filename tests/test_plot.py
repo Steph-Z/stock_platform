@@ -10,7 +10,7 @@ def test_plot_stock_chart_line_returns_figure():
         'Date': pd.date_range('2025-08-01', periods=5),
         'Close': [100, 102, 101, 99, 98]
     })
-    # Don't set index—keep 'Date' as a column
+
 
 
     # Mock yfinance.Ticker.info
