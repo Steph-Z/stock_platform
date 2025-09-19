@@ -17,8 +17,7 @@ def prepare_stock_data(ticker):
     data = yf.download(f'{ticker}', period = 'max')
     data.columns = data.columns.get_level_values(0) #get rid of the multi index for easier cashing
     data = data.reset_index()
-    data.index.name = 'Date'
-    
+   
     return data
 
 
@@ -28,7 +27,5 @@ def decode_records_data(data_records):
     
     data = pd.DataFrame(data_records)
     data["Date"] = pd.to_datetime(data["Date"])
-    data = data.set_index("Date")
-    data.index.name = 'Date'
-    
+   
     return data

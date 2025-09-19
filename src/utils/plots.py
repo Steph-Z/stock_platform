@@ -13,7 +13,7 @@ def plot_stock_chart_line(data: pd.DataFrame, ticker):
     fig = px.line(data_frame= data,
             x= 'Date',
             y = 'Close',
-            labels = {'Close': y_name, 'Date': data.index.name})
+            labels = {'Close': y_name, 'Date': 'Date'})
     
     fig.update_layout(title= {"text": f'Chart of the {comp_name} Stock', "font":{"size": 20}, "x": 0.5, "y":0.95, "xanchor": "center", "yanchor": "top"})
     

@@ -8,7 +8,7 @@ def calculate_volatility(timeframe:tuple, data:pd.DataFrame, ticker: str):
     '''This function calculates the volatility of a Stock for a given start and end date given by a tuple (start, end)
     in the format 'year-month-date', includes start state, omits end date '''
     
-    data_adjusted = data['Close'].loc[(data.index >= timeframe[0]) & (data.index < timeframe[1])]
+    data_adjusted = data['Close'].loc[(data['Date'] >= timeframe[0]) & (data['Date'] < timeframe[1])]
     
     vola_timeframe = data_adjusted.std() #already uses degrees of freedom
     
