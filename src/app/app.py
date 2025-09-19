@@ -5,7 +5,7 @@ from dash import Dash, dcc, html, Input, Output, callback
 
 from utils.metrics import calculate_volatility
 from utils.plots import plot_stock_chart_line
-from utils.transforms import isin_ticker_to_ticker
+from utils.transforms import isin_ticker_to_ticker, prepare_stock_data,  decode_records_data
 from utils.misc import create_navbar
 #Initializing the app
 
@@ -75,11 +75,9 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 def update_data_and_plot(ticker):    
 
     ticker = isin_ticker_to_ticker(ticker)
+    data = prepare_stock_data(ticker)
         
-    data = yf.download(f'{ticker}', period = 'max')
-    data.columns = data.columns.get_level_values(0) #get rid of the multi index for easier cashing
-    data = data.reset_index()
-    data.index.name = 'Date'
+    
     #get the figure 
     fig = plot_stock_chart_line(data = data, ticker = ticker)
     #change colors of the figure to match the layout
@@ -94,6 +92,8 @@ def update_data_and_plot(ticker):
     return  fig, data.to_dict('records')
 
 
+    
+
 @callback(
     Output('volatility-custom-timeframe', 'children'),
     Input('Stockselection', 'value'),
@@ -103,15 +103,14 @@ def update_data_and_plot(ticker):
 )
 def update_volatility(ticker, start_date, end_date, data_records):
 
-    data = pd.DataFrame(data_records)
-    data["Date"] = pd.to_datetime(data["Date"])
-    data = data.set_index("Date")
-    data.index.name = 'Date'
+    data = decode_records_data(data_records)
     
     ticker = isin_ticker_to_ticker(ticker)
     vol, num_days = calculate_volatility((start_date, end_date), data, ticker)
 
     return f'Volatility for the Timeframe from {start_date} to {end_date} ({num_days} trading days) is: {vol:.2f}'
+
+
 
 
 

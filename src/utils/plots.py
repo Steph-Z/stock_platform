@@ -5,7 +5,7 @@ import yfinance as yf
 
 
 def plot_stock_chart_line(data: pd.DataFrame, ticker):
-    '''Plots the chart of a Stock as a Line, needs the input from a yfinane df where only one column remains
+    '''Plots the chart of a Stock as a Line, needs the input from a yfinane df
     to either display the opening or close prices, default will be the close prices '''
     y_name = f"Price in {yf.Ticker(ticker).info['currency']}"
     comp_name = yf.Ticker(ticker).info['displayName']
