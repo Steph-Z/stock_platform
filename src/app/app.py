@@ -36,7 +36,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
         id = 'Stockselection',
         placeholder = "Enter a Ticker or ISIN",
         type = 'text',
-        value = 'AAPL',
+        value = 'US0378331005',
         debounce= True,
         style={
         'textAlign': 'center',
