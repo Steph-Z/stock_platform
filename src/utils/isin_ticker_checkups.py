@@ -1,3 +1,5 @@
+import yfinance as yf
+
 def input_case_insensitive(isin_input):
     '''returns a case insensitive version of the user input'''
     return isin_input.upper().replace(' ','')
@@ -69,6 +71,8 @@ def check_ticker(user_input: str, check_function = None):
     has an input for the check function to avoid online lookup during testing,
     to check, see if it has a price during market hours'''
     
+    if check_function is None:
+        check_function = yf.Ticker
     try:
         if check_function(user_input).info['regularMarketPrice'] is not None:
             return True
@@ -76,5 +80,21 @@ def check_ticker(user_input: str, check_function = None):
             return False
     except Exception:
         return False
+
+############
+def check_isin_ticker_input(user_input:str, check_function = None):
+    '''checks the users input of stock data and returns true or false depending on its validity'''
     
-check_ticker('asdPL', check_function= yf.Ticker)
+    if not isinstance(user_input, str):
+        return False
+    
+    preprocess_input = input_case_insensitive(remove_dashes(user_input))
+    
+    if len(preprocess_input) < 12:
+        #must be a ticker/ or invald isin, enter ticker checkup
+        validity = check_ticker(preprocess_input, check_function= None)
+    else:
+        if (isValid_ISIN_Code(preprocess_input) and check_luhns(preprocess_input)):
+            return True
+        else:
+            return False
