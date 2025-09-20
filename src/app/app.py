@@ -1,7 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import plotly.express as px 
-from dash import Dash, dcc, html, Input, Output, callback
+from dash import Dash, dcc, html, Input, Output, State, callback
 
 from utils.metrics import calculate_volatility
 from utils.plots import plot_stock_chart_line
@@ -46,7 +46,8 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
     
     #Store the data so I can acess it in multiple callbacks
     
-    dcc.Store(id = 'stock-data'),  
+    dcc.Store(id = 'stock-data'), 
+    dcc.Store(id = 'last_valid_stock'), 
     #Plot
     dcc.Graph(figure = {}, id = 'stockchart'),
     
@@ -64,15 +65,19 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 ])
 
 #Connect the LAyout to the functions
+
 #Callback for chat/stock data 
 @callback(
         Output(component_id = 'stockchart', component_property = "figure"), #always the id of the compoent and then the property, they are fixed
         Output('stock-data', 'data' ),
-        Input('Stockselection', "value")
+        Input('Stockselection', 'value'),
+        State('last_valid_stock', 'value')
 )
 
-
-def update_data_and_plot(ticker):    
+def update_data_and_plot(ticker):
+    
+    #ticker is the user input for isin or ticker 
+        
 
     ticker = isin_ticker_to_ticker(ticker)
     data = prepare_stock_data(ticker)

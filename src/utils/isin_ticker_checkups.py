@@ -1,6 +1,6 @@
 def input_case_insensitive(isin_input):
     '''returns a case insensitive version of the user input'''
-    return isin_input.upper().strip()
+    return isin_input.upper().replace(' ','')
 
 def remove_dashes(isin_input: str):
     '''removes the dashes from a seemingly valid isin in case there are any '''
@@ -62,3 +62,19 @@ def check_luhns(isin_input):
             checksum += 2* number
 
     return int(transformed_isin[-1]) == ((10 - (checksum % 10)) % 10)
+
+
+def check_ticker(user_input: str, check_function = None):
+    '''takes a users input that resembles a ticker and checks if it is valid,
+    has an input for the check function to avoid online lookup during testing,
+    to check, see if it has a price during market hours'''
+    
+    try:
+        if check_function(user_input).info['regularMarketPrice'] is not None:
+            return True
+        else: 
+            return False
+    except Exception:
+        return False
+    
+check_ticker('asdPL', check_function= yf.Ticker)
