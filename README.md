@@ -24,7 +24,7 @@ For this project I am using:
 - **pytest** - for unit and integration tests
 ---
 
-## 🌍 Deployment
+##  Deployment
 
 The app is hosted under:
 
