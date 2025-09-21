@@ -36,8 +36,11 @@ def update_stock_plot(stock_input_value, stock_data_records,ticker):
     
      # Apply consistent color scheme
     fig.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)",   #workaround for plots, make the transparent in the layout 
+        paper_bgcolor="rgba(0,0,0,0)",   
         xaxis=dict(gridcolor=colors['chart_gridcolor']),
-        yaxis=dict(gridcolor=colors['chart_gridcolor'])
+        yaxis=dict(gridcolor=colors['chart_gridcolor']),
+        font_color = colors['text']
     )
 
     return fig
