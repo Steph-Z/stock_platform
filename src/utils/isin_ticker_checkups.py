@@ -1,8 +1,9 @@
 import yfinance as yf
+import re
 
 def input_case_insensitive(isin_input):
     '''returns a case insensitive version of the user input'''
-    return isin_input.upper().replace(' ','')
+    return isin_input.upper().replace(' ','').strip() #strip helps agaist unwanted tabs or spaces that are not defined as ' '
 
 def remove_dashes(isin_input: str):
     '''removes the dashes from a seemingly valid isin in case there are any '''
@@ -37,7 +38,7 @@ def isValid_ISIN_Code(isin_input: str):
 #I really did not expect this much depths for such a "simple" task
 #convert letters to ascii -55 
 
-def check_luhns(isin_input):
+def check_luhn(isin_input):
     '''the str will have passed the is isin valid function. 
     checks if the isin is correct by employing luhn algorithm
     #https://en.wikipedia.org/wiki/Luhn_algorithm, even with pseudocode '''
@@ -85,16 +86,24 @@ def check_ticker(user_input: str, check_function = None):
 def check_isin_ticker_input(user_input:str, check_function = None):
     '''checks the users input of stock data and returns true or false depending on its validity'''
     
+    #At this point I will stop optimizing the code/isin/ticker checkup.
+    #IT could still be improved i.e. i could save sucessfull checks in a lookup to avoid multiple checks of the same thing 
+    
     if not isinstance(user_input, str):
         return False
     
     preprocess_input = input_case_insensitive(remove_dashes(user_input))
     
+    if preprocess_input == '':
+        return False
+    
     if len(preprocess_input) < 12:
         #must be a ticker/ or invald isin, enter ticker checkup
-        validity = check_ticker(preprocess_input, check_function= None)
+        validity = check_ticker(preprocess_input, check_function= check_function)
+        
+        return validity
     else:
-        if (isValid_ISIN_Code(preprocess_input) and check_luhns(preprocess_input)):
+        if (isValid_ISIN_Code(preprocess_input) and check_luhn(preprocess_input)):
             return True
         else:
             return False
