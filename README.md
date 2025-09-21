@@ -1,4 +1,4 @@
-# 📊 Stock-Learning-Projekt
+#  Stock-Learning-Projekt
 
 In this project I want to **learn how to develop and deploy a Data App / Dashboard** using Python and related libraries.  
 
@@ -13,7 +13,7 @@ Since writing near-production level code and tests, even for a small dashboard, 
 For **Testing**, please refer to `testing_learnings.ipynb` and `tests/test_user_input.py` to see how I check the functions that handle the initial user input for a Stock (ISIN or Ticker). If you have any suggestions, feel free to contact me about it.
 
 
-## 🚀 Tech Stack
+##  Tech Stack
 
 For this project I am using:
 
@@ -33,7 +33,7 @@ The app is hosted under:
  
 ---
 
-## 📈 Using the App
+##  Using the App
 
 - Search for stocks via **ISIN or Tracker** (or ticker symbol).  
 - Visualize price history with different **chart types** (line, candlestick, etc.).  
@@ -42,7 +42,7 @@ The app is hosted under:
 
 ---
 
-## 🔧 Setup (Local Development)
+##  Setup (Local Development)
 
 To set up the project locally, follow these steps:
 
