@@ -82,11 +82,11 @@ def test_check_luhn_computes_checksum_correctly(isin, valid):
     ('1234', False),  
 ])
 
-def test_check_ticker_with_injected_fake(FakeTicker, symbol, expected):
+def test_check_ticker_with_injected_fake(fake_ticker, symbol, expected):
     '''
     check_ticker should call the injected class for checking not yfinance 
     '''
-    assert check_ticker(symbol, check_function=FakeTicker) == expected
+    assert check_ticker(symbol, check_function=fake_ticker) == expected
     
     
 #Integration test of the full thing; now I use more LLM code as it is quite the hastle to build the str by hand;
@@ -119,7 +119,7 @@ def test_check_isin_ticker_input_end_to_end(fake_ticker, user_input, expected):
     """
     This integration-style test drives the full pipeline:
     """
-    result = check_isin_ticker_input(user_input, check_function=FakeTicker)
+    result = check_isin_ticker_input(user_input, check_function=fake_ticker)
     assert result == expected
     
     
