@@ -132,6 +132,3 @@ class Test_integration_whole_isin_ticker_cheker:
         assert result == expected
         
         
-    #Tests are passed for now. 
- #   tests\test_user_input.py ...                                                                                                              [100%]
-#27 passed in 1.22s ====
