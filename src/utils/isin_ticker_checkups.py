@@ -15,7 +15,7 @@ def isValid_ISIN_Code(isin_input: str):
     ##https://www.geeksforgeeks.org/dsa/how-to-validate-isin-using-regular-expressions/
 
     # Regex to check valid ISIN Code
-    regex = "^[A-Z]{0,1}[0-9A-Z]{9}[0-9]{1}$" #original function contained an option to check for dashes, removed in prev. step now
+    regex = "^[A-Z]{2}[0-9A-Z]{9}[0-9]{1}$" #original function contained an option to check for dashes, removed in prev. step now
 
     # Compile the ReGex
     p = re.compile(regex)
