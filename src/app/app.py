@@ -1,5 +1,6 @@
-from dash import Dash, dcc, html, Input, Output
+from dash import Dash, dcc, html, Input, Output, clientside_callback
 import dash_bootstrap_components as dbc
+from dash_bootstrap_templates import load_figure_template
 import pandas as pd
 import yfinance as yf
 
@@ -8,12 +9,12 @@ from pages import landingpage, plotpage
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
 from utils.transforms import isin_ticker_to_ticker, prepare_stock_data
 
-
 #Initializing the app
 
 #use bootstrap to make it easiert to build a pretty application 
 #https://www.dash-bootstrap-components.com/docs/themes/
-app = Dash(__name__, external_stylesheets=[dbc.themes.DARKLY], suppress_callback_exceptions= True)
+
+app = Dash(__name__, external_stylesheets=[dbc.themes.CYBORG],  suppress_callback_exceptions= True)#
 app.title = 'Stock Dashboard'
 
 #Input section for the stock, shared across different tabs
@@ -31,7 +32,6 @@ stock_input = dcc.Input(
 stock_data_stored = dcc.Store(id = 'stockdata')
 comp_name = dcc.Store( id = 'name_company')
 ticker = dcc.Store(id= 'ticker')
-
 #Now we build the different Tabs
 
 tabs = dbc.Tabs(
@@ -51,14 +51,15 @@ application. Feel free to pick any Stock you like and explore the tabs. The Gith
 
 app.layout = dbc.Container(
     [
-    html.H1("Stock Dashboard", style={'textAlign': 'center'}),
+    html.H1("Stock Dashboard", style={'textAlign': 'center'}),    
     dcc.Markdown(explain_text),
     stock_input,
     tabs,
     html.Div(id = 'tab-content'),
     stock_data_stored,
     comp_name,
-    ticker
+    ticker,
+
     ], #short learning. a Div is a container for almost anything that flows and can be anything
     fluid= True)
 
