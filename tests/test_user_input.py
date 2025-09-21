@@ -112,7 +112,7 @@ def test_check_ticker_with_injected_fake(FakeTicker, symbol, expected):
     ("XYZ", False),
     ('', False),
     (' ', False),
-    ('AAPL!!!!!!!!!')
+    ('AAPL!!!!!!!!!', False)
 ])
 
 def test_check_isin_ticker_input_end_to_end(fake_ticker, user_input, expected):
