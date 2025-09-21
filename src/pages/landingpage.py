@@ -1,4 +1,5 @@
 from dash import html, dcc, Input, Output, callback, dash_table
+import dash_bootstrap_components as dbc
 import pandas as pd
 
 
@@ -13,13 +14,7 @@ def layout():
         html.H2(landing_text),
         html.Br(), #linebreak
         html.Div(id = 'selected_stock_display'),        
-        dash_table.DataTable( #https://dash.plotly.com/datatable/height need to be careful with the displaying of large tables 
-            id = 'stock_table',
-            data = [],
-            columns = [],
-            page_size=30,  
-            style_table={'height': '400px', 'overflowY': 'auto'}
-        ),
+        html.Div(id = 'stock_table'),
         ],
         style= {'textAlign': 'center'}
     )
@@ -39,17 +34,25 @@ def display_selected_stock(stock):
     
 #Callback for the data in the table
 @callback(
-    Output('stock_table', 'data'),
-    Output('stock_table', 'columns'),
+    Output('stock_table', 'children'),
     Input('stockdata', 'data')
 )
 def update_stock_table(stock_data):
     if not stock_data:
         return [], []
-    
-    columns = [{'name': col, 'id': col} for col in stock_data[0].keys()]
-    if len(pd.DataFrame(stock_data)) > 50:
-        return pd.DataFrame(stock_data).head(50).to_dict('records'), columns
+    data = pd.DataFrame(stock_data).sort_index(ascending= False)
+    if len(data) > 100:
+
+        data = data.head(100)
+        data["Date"] = pd.to_datetime(data["Date"]).dt.strftime("%d.%m.%Y") 
+        table = dbc.Table.from_dataframe(
+             data.round(2), striped=True, bordered=True, hover=True, index=False, responsive = True
+        )
+
+        return table
     else:
-        return stock_data, columns
+        table = dbc.Table.from_dataframe(
+             data.round(2), striped=True, bordered=True, hover=True, index= False, responsive = True
+        )
+        return table
         
