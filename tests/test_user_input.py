@@ -14,7 +14,7 @@ from utils.isin_ticker_checkups import input_case_insensitive, remove_dashes, is
 ###Mock class to avoid calling yfinance for the test of ticker, We now always need to use AAPL to test ticker symbols
 @pytest.fixture
 def FakeTicker():
-    class _FakeTicker:
+    class _FakeTicker: #cconvention to remember: a leading _ indicates this is for internal use 
         def __init__(self, ticker):
             self.info = {'regularMarketPrice': 1} if ticker == 'AAPL' else {}
     return _FakeTicker
