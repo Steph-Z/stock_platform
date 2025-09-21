@@ -1,6 +1,5 @@
 import pytest
-import re
-import yfinance as yf
+
 
 from utils.isin_ticker_checkups import input_case_insensitive, remove_dashes, isValid_ISIN_Code, check_luhn, check_ticker, check_isin_ticker_input
 
@@ -13,7 +12,7 @@ from utils.isin_ticker_checkups import input_case_insensitive, remove_dashes, is
 
 ###Mock class to avoid calling yfinance for the test of ticker, We now always need to use AAPL to test ticker symbols
 @pytest.fixture
-def FakeTicker():
+def fake_ticker():
     class _FakeTicker: #cconvention to remember: a leading _ indicates this is for internal use 
         def __init__(self, ticker):
             self.info = {'regularMarketPrice': 1} if ticker == 'AAPL' else {}
@@ -72,7 +71,7 @@ def test_check_luhn_computes_checksum_correctly(isin, valid):
     '''
     check_luhn assumes the ISIN passed re ex validation,
     '''
-    assert check_luhn(isin) is valid
+    assert check_luhn(isin) == valid
     
 ##Test for the ticker cheker using the mock class 
 
@@ -87,7 +86,7 @@ def test_check_ticker_with_injected_fake(FakeTicker, symbol, expected):
     '''
     check_ticker should call the injected class for checking not yfinance 
     '''
-    assert check_ticker(symbol, check_function=FakeTicker) is expected
+    assert check_ticker(symbol, check_function=FakeTicker) == expected
     
     
 #Integration test of the full thing; now I use more LLM code as it is quite the hastle to build the str by hand;
@@ -111,14 +110,17 @@ def test_check_ticker_with_injected_fake(FakeTicker, symbol, expected):
     ("     ", False),
     # Short string that is alphanumeric but not a real ticker
     ("XYZ", False),
+    ('', False),
+    (' ', False),
+    ('AAPL!!!!!!!!!')
 ])
 
-def test_check_isin_ticker_input_end_to_end(FakeTicker, user_input, expected):
+def test_check_isin_ticker_input_end_to_end(fake_ticker, user_input, expected):
     """
     This integration-style test drives the full pipeline:
     """
     result = check_isin_ticker_input(user_input, check_function=FakeTicker)
-    assert result is expected
+    assert result == expected
     
     
     #Tests are passed for now. 
