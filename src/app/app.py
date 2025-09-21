@@ -1,6 +1,7 @@
 from dash import Dash, dcc, html, Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
+import yfinance as yf
 
 from pages import landingpage, plotpage
 
@@ -28,7 +29,8 @@ stock_input = dcc.Input(
         }) 
 
 stock_data_stored = dcc.Store(id = 'stockdata')
-stock_ticker_stored = dcc.Store( id = 'stockticker')
+comp_name = dcc.Store( id = 'name_company')
+ticker = dcc.Store(id= 'ticker')
 
 #Now we build the different Tabs
 
@@ -55,14 +57,16 @@ app.layout = dbc.Container(
     tabs,
     html.Div(id = 'tab-content'),
     stock_data_stored,
-    stock_ticker_stored
+    comp_name,
+    ticker
     ], #short learning. a Div is a container for almost anything that flows and can be anything
     fluid= True)
 
 #callback to retrieve stock data 
 @app.callback(
     Output('stockdata', 'data'),
-    Output('stockticker', 'data'),
+    Output('name_company', 'data'),
+    Output('ticker', 'data'),
     Input('Stockselection', 'value')
 )
 
@@ -73,8 +77,10 @@ def retrieve_stock_data(stock_input_value):
     normed_stock_input =  input_case_insensitive(remove_dashes(stock_input_value))
     ticker = isin_ticker_to_ticker(normed_stock_input) #ToDo more robust
     data = prepare_stock_data(ticker) #To do more robust
+    #get the company name for display purposes throuout the app
+    comp_name = yf.Ticker(ticker).info['displayName']
     
-    return data.to_dict('records'), ticker
+    return data.to_dict('records'), comp_name,ticker
     
     
     

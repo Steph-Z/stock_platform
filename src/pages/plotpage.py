@@ -22,16 +22,17 @@ def layout():
 #Callback to update the plot bassed on the selected stock and data 
 @callback(
     Output('stocklineplot', 'figure'),
-    Input('Stockselection', 'value'),
-    Input('stockdata', 'data')
+    Input('name_company', 'data'),
+    Input('stockdata', 'data'),
+    Input('ticker', 'data')
 )
-def update_stock_plot(stock_input_value, stock_data_records):
+def update_stock_plot(stock_input_value, stock_data_records,ticker):
     
     if not stock_input_value or not stock_data_records:
         return {}
     
     df =decode_records_data(stock_data_records)
-    fig = plot_stock_chart_line(df, ticker= stock_input_value)
+    fig = plot_stock_chart_line(df, comp_name= stock_input_value, ticker= ticker)
     
      # Apply consistent color scheme
     fig.update_layout(

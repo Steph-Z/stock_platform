@@ -23,7 +23,7 @@ def layout():
 #Callback to update the stock information, This will ofen be used on all pages
 @callback(
     Output('selected_stock_display', 'children'),
-    Input('Stockselection', 'value')
+    Input('name_company', 'data')
 )
 
 def display_selected_stock(stock):
@@ -42,17 +42,27 @@ def update_stock_table(stock_data):
         return [], []
     data = pd.DataFrame(stock_data).sort_index(ascending= False)
     if len(data) > 100:
-
         data = data.head(100)
-        data["Date"] = pd.to_datetime(data["Date"]).dt.strftime("%d.%m.%Y") 
-        table = dbc.Table.from_dataframe(
+
+    data["Date"] = pd.to_datetime(data["Date"]).dt.strftime("%d.%m.%Y") 
+    table = dbc.Table.from_dataframe(
              data.round(2), striped=True, bordered=True, hover=True, index=False, responsive = True
         )
+    
+    #to make the table scrollable we can put it in another Div container with styling 
+    #the styles can be found under: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference, ITs too much for me to really go through
+    #all options, so in this case I'll see how it looks and use an LLM to find the styles i need to achieve a specific results
+    scrollable_table = html.Div(
+        table,
+        style={
+            "maxHeight": "400px",
+            "overflowY": "auto",
+            "margin": "0 auto",
+            "width": "80%",
+            "boxShadow": "0px 4px 10px rgba(0,0,0,0.2)",
+            "borderRadius": "8px"
+        }
+    )
 
-        return table
-    else:
-        table = dbc.Table.from_dataframe(
-             data.round(2), striped=True, bordered=True, hover=True, index= False, responsive = True
-        )
-        return table
-        
+    return scrollable_table
+ 
