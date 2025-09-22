@@ -10,18 +10,19 @@ def test_plot_stock_chart_line_returns_figure():
         'Date': pd.date_range('2025-08-01', periods=5),
         'Close': [100, 102, 101, 99, 98]
     })
+    comp_name = 'Apple' #is passed from main app usually, always will be there 
+    #cause we catch wrong tickers/isins earlier
 
 
 
     # Mock yfinance.Ticker.info
     with patch('yfinance.Ticker') as MockTicker:
         MockTicker.return_value.info = {
-            'currency': 'USD',
-            'displayName': 'Apple Inc.'
+            'currency': 'USD'
         }
 
-        fig = plot_stock_chart_line(df, 'AAPL')
+        fig = plot_stock_chart_line(df, comp_name, 'AAPL')
 
         assert isinstance(fig, Figure)
-        assert fig.layout.title.text == 'Chart of the Apple Inc. Stock'
+        assert fig.layout.title.text == 'Chart of the Apple Stock'
         assert fig.data[0].y.tolist() == [100, 102, 101, 99, 98]
