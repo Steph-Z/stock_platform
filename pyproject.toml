@@ -15,7 +15,7 @@ dependencies = [
     pandas==2.3.2,
     plotly==6.3.0,
     pytest==8.4.2,
-    yfinance==0.2.66,
+    yfinance==0.2.66
 ]
 
 [tool.setuptools]
