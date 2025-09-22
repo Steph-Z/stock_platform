@@ -7,15 +7,15 @@ name = "stock_dashboard"
 version = "0.1.0"
 description = "Your scalable stock dashboard"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.13"
 dependencies = [
-    dash==3.2.0,
-    dash_bootstrap_components==2.0.4,
-    dash_bootstrap_templates==2.1.0,
-    pandas==2.3.2,
-    plotly==6.3.0,
-    pytest==8.4.2,
-    yfinance==0.2.66
+    "dash==3.2.0",
+    "dash_bootstrap_components==2.0.4",
+    "dash_bootstrap_templates==2.1.0",
+    "pandas==2.3.2",
+    "plotly==6.3.0",
+    "pytest==8.4.2",
+    "yfinance==0.2.66"
 ]
 
 [tool.setuptools]
