@@ -1,0 +1,7 @@
+#In this File I gather libraries that are not automatically detcted 
+#by pipreqs like gunicorn
+#If I automatically write the requirements, manually added libraries get deleted, so 
+#I maintain this .txt in a minimal way.
+#After updating the requirements file i need to copy these into the main one 
+pipreqs ==0.4.13
+gunicorn==23.0.0

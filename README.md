@@ -23,14 +23,18 @@ For this project I am using:
 - **yfinance** – real-time stock/financial data
 - **pytest** - for unit and integration tests
 - **Github Actions** -for automating Tests
+- **pipreqs** - to manage the requirements.txt
+- **gunicorn** - as a HTTP server
+- **Render** - to host the dashboard
 ---
 
 ##  Deployment
 
 The app is hosted under:
 
-- currently the app is not publicly hosted.
-- This will be updated once the app is deployed
+- The dashboard is hosted through render. 
+- A BIG thank you goes to https://github.com/thusharabandara/dash-app-render-deployment for helping with a steep learning curve
+- 
  
 ---
 
@@ -56,7 +60,6 @@ Set up a Python virtual environment to isolate dependencies:
 
 3. **Install required libraries**  
 Use the `requirements.txt` file to install dependencies:
-
 
 4. **Install the project in editable mode**  
 This allows you to make changes to the source code without reinstalling:

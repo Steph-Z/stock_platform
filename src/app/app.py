@@ -14,8 +14,11 @@ from utils.transforms import isin_ticker_to_ticker, prepare_stock_data
 #use bootstrap to make it easiert to build a pretty application 
 #https://www.dash-bootstrap-components.com/docs/themes/
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.CYBORG],  suppress_callback_exceptions= True)#
+app = Dash(__name__, external_stylesheets=[dbc.themes.CYBORG],  suppress_callback_exceptions= True)
 app.title = 'Stock Dashboard'
+
+#To host the app
+server = app.server
 
 #Input section for the stock, shared across different tabs
 
@@ -98,7 +101,8 @@ def render_tab_content(active_tab):
         return plotpage.layout()
     return 'No Tab selected'
 
-
+#not needed anymore since I introcuded a main.py as a convinient entry point
+##general rule; here we run in debug = True, in main we do not
 if __name__ == "__main__":
     app.run(debug = True)
  
