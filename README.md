@@ -22,6 +22,7 @@ For this project I am using:
 - **pandas** – data wrangling
 - **yfinance** – real-time stock/financial data
 - **pytest** - for unit and integration tests
+- **Github Actions** -for automating Tests
 ---
 
 ##  Deployment
