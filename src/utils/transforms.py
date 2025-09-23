@@ -14,7 +14,7 @@ def isin_ticker_to_ticker(ticker_isin:str):
 def prepare_stock_data(ticker):
     '''Uses a Ticker, NOT ISIN to download the stock data and preprocesses it into the standard format expected by other functions'''
     
-    data = yf.download(f'{ticker}', period = 'max')
+    data = yf.download(f'{ticker}', period = '5y')
     data.columns = data.columns.get_level_values(0) #get rid of the multi index for easier cashing
     data = data.reset_index()
    
