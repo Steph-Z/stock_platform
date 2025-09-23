@@ -26,30 +26,41 @@ server = app.server
 #Input section for the stock, shared across different sides of the navbar
 #Input now treated like a search box : https://www.dash-bootstrap-components.com/docs/components/navbar/#
 #good explanation for the col solution here: https://www.dash-bootstrap-components.com/docs/components/layout/
-stock_input = dbc.Row(
+stock_input = html.Div(
     [
-        dbc.Col(html.Span('Enter ISIN/Ticker:', style={'color': 'white', 'marginRight': '10px'}), width='auto'), #span better than markdown here
-        dbc.Col(
-            dbc.Input(
-                id='Stockselection',
-                type='text',
-                placeholder='ISIN/Ticker',
-                value='US0378331005',
-                size='sm',
+        dbc.Row(
+            [
+                dbc.Col(
+                    html.Span('Enter ISIN/Ticker:', style={'color': 'white', 'marginRight': '10px'}),
+                    width='auto'
+                ),
+                dbc.Col(
+                    dbc.Input(
+                        id='Stockselection',
+                        type='text',
+                        placeholder='ISIN/Ticker',
+                        value='US0378331005',
+                        size='sm',
+                    ),
+                    width='auto',
+                ),
+                dbc.Col(
+                    dbc.Button('Enter', id='stockbutton', color='primary', size='sm', className='ms-auto'),
+                    width='auto',
+                ),
+            ],
+            align='center',
+            className='g-2',
+        ),
+
+        dbc.Row(
+            dbc.Col(
+                html.Span(id='current_stock', style={'color': 'white'}),
+                width='auto'  
             ),
-            width='auto',
-        ),
-        dbc.Col(
-            dbc.Button('Enter', id='stockbutton', color='primary', size='sm', className='ms-2'),
-            width='auto',
-        ),
-        dbc.Col(
-            html.Span(id='current_stock', style={'color': 'white', 'marginLeft': '15px'}),
-            width='auto',
-        ),
-    ],
-    align='center',
-    className='g-2',
+            className='mt-2' 
+        )
+    ]
 )
 
 #Navbar
@@ -60,15 +71,15 @@ page_links = dbc.Nav(
     ],
     pills=True,
     navbar=True,
-    class_name='ms-auto'
+    class_name='ms-2'
 )
 
 navbar = dbc.Navbar(
     dbc.Container(
         [
-            stock_input,
             dbc.NavbarToggler(id='navbar-toggler'),
-            dbc.Collapse(page_links, id='navbarcollapse', is_open=False, navbar=True)
+            dbc.Collapse(page_links, id='navbarcollapse', is_open=False, navbar=True),
+            stock_input
         ],
         fluid=True
     ),
@@ -147,7 +158,7 @@ def retrieve_stock_data(stock_input_value, n_clicks):
         #get the company name for display purposes throuout the app
         comp_name = yf.Ticker(ticker).info['displayName']
         
-        return data.to_dict('records'), comp_name,ticker, f'Currently Selected: {comp_name}'
+        return data.to_dict('records'), comp_name,ticker, f'Company Name: {comp_name}'
     except Exception:
         return [], None, None, 'Invalid'
     
