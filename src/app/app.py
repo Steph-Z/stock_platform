@@ -26,6 +26,12 @@ server = app.server
 #Input section for the stock, shared across different sides of the navbar
 #Input now treated like a search box : https://www.dash-bootstrap-components.com/docs/components/navbar/#
 #good explanation for the col solution here: https://www.dash-bootstrap-components.com/docs/components/layout/
+
+#Title/Nav Text
+perma_text = 'Plotpoint'
+perma_subtext ='by Steph'
+
+#Stock input 
 stock_input = html.Div(
     [
         dbc.Row(
@@ -76,11 +82,21 @@ page_links = dbc.Nav(
 
 navbar = dbc.Navbar(
     dbc.Container(
-        [
-            dbc.NavbarToggler(id='navbar-toggler'),
-            dbc.Collapse(page_links, id='navbarcollapse', is_open=False, navbar=True),
-            stock_input
+        dbc.Row([
+            dbc.Col(page_links, width='auto', className='d-flex align-items-center'),
+            dbc.Col(
+            html.Div([
+                html.H2(perma_text, style={'color': 'white', 'marginRight': '10px'}),
+                html.H6(perma_subtext, style={'color': 'lightgray', 'marginTop': '8px'})
+            ],
+            style={'display': 'flex', 'alignItems': 'flex-end'}),
+            className='d-flex justify-content-center',
+            width=True
+        ),
+            dbc.Col(stock_input, width='auto', className='d-flex align-items-center'),
         ],
+        align='center',
+        className='w-100 g-2'),
         fluid=True
     ),
     color='dark',
