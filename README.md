@@ -1,6 +1,7 @@
-#  Stock-Learning-Projekt
+#  Stock-Learning-Projekt: https://stephs-plotpoint.onrender.com/
 
 In this project I want to **learn how to develop and deploy a Data App / Dashboard** using Python and related libraries.  
+The inital loading time of the Dashboard might take up to a minute, as a result from renders **free** hosting service
 
 The goal is to build a small but scalable financial dashboard that fetches real-time data, provides interactive charts, and calculates useful stock metrics. I focus on learning classical software engineering skills required in DS or AI engineering roles. This includes thinking about **Testing, CI/CD, robustness, readability**. Additionally, this is a **learning project**, so next to standard comments in the code, I highlight things I learned on the way and found interesting and noteworthy.
 
@@ -31,11 +32,11 @@ For this project I am using:
 ##  Deployment
 
 The app is hosted under:
-
+- https://stephs-plotpoint.onrender.com/
+- -On an initial Startup, the application might take a while to load (this is a result of renders free hosting service)
 - The dashboard is hosted through render. 
 - A BIG thank you goes to https://github.com/thusharabandara/dash-app-render-deployment for helping with a steep learning curve
-- 
- 
+
 ---
 
 ##  Using the App
