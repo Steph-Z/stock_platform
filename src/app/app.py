@@ -1,14 +1,15 @@
-from dash import Dash, dcc, html, Input, Output, clientside_callback
+from dash import Dash, dcc, html, Input, Output, State, no_update
 import dash_bootstrap_components as dbc
-from dash_bootstrap_templates import load_figure_template
-import pandas as pd
 import yfinance as yf
-
-from pages import landingpage, plotpage
 
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
 from utils.transforms import isin_ticker_to_ticker, prepare_stock_data
 
+#Import of the LAyouts of other sides 
+from pages.home import layout as  home_layout
+
+
+################################################
 #Initializing the app
 
 #use bootstrap to make it easiert to build a pretty application 
@@ -16,93 +17,153 @@ from utils.transforms import isin_ticker_to_ticker, prepare_stock_data
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.CYBORG],  suppress_callback_exceptions= True)
 app.title = 'Stock Dashboard'
-
 #To host the app
 server = app.server
 
-#Input section for the stock, shared across different tabs
 
-stock_input = dcc.Input(
-        id = 'Stockselection',
-        placeholder = "Enter a Ticker or ISIN",
-        type = 'text',
-        value = 'US0378331005',
-        debounce= True,
-        style={
-        'textAlign': 'center',
-        }) 
-
-stock_data_stored = dcc.Store(id = 'stockdata')
-comp_name = dcc.Store( id = 'name_company')
-ticker = dcc.Store(id= 'ticker')
-#Now we build the different Tabs
-
-tabs = dbc.Tabs(
+################################################
+#Navbar Definition
+#Input section for the stock, shared across different sides of the navbar
+#Input now treated like a search box : https://www.dash-bootstrap-components.com/docs/components/navbar/#
+#good explanation for the col solution here: https://www.dash-bootstrap-components.com/docs/components/layout/
+stock_input = dbc.Row(
     [
-        dbc.Tab(label= 'Home', tab_id= 'home'),
-        dbc.Tab(label= 'Charts', tab_id= 'plots')
+        dbc.Col(html.Span('Enter ISIN/Ticker:', style={'color': 'white', 'marginRight': '10px'}), width='auto'), #span better than markdown here
+        dbc.Col(
+            dbc.Input(
+                id='Stockselection',
+                type='text',
+                placeholder='ISIN/Ticker',
+                value='US0378331005',
+                size='sm',
+            ),
+            width='auto',
+        ),
+        dbc.Col(
+            dbc.Button('Enter', id='stockbutton', color='primary', size='sm', className='ms-2'),
+            width='auto',
+        ),
+        dbc.Col(
+            html.Span(id='current_stock', style={'color': 'white', 'marginLeft': '15px'}),
+            width='auto',
+        ),
     ],
-    id= 'tabs',
-    active_tab= 'home'
+    align='center',
+    className='g-2',
 )
-#We have to define the layout now
+
+#Navbar
+page_links = dbc.Nav(
+    [
+        dbc.NavItem(dbc.NavLink('Home', href='/', active='exact')),
+        dbc.NavItem(dbc.NavLink('Charts', href='/charts', active='exact')),
+    ],
+    pills=True,
+    navbar=True,
+    class_name='ms-auto'
+)
+
+navbar = dbc.Navbar(
+    dbc.Container(
+        [
+            stock_input,
+            dbc.NavbarToggler(id='navbar-toggler'),
+            dbc.Collapse(page_links, id='navbarcollapse', is_open=False, navbar=True)
+        ],
+        fluid=True
+    ),
+    color='dark',
+    dark=True,
+    sticky='top'
+)
+ 
+################################################################################################
+#Caches for easy access in different tabs and places on the navbar, these need to be shared across the different navbar sides
+
+global_stores = html.Div(
+    [
+    dcc.Store(id = 'stockdata'),
+    dcc.Store( id = 'name_company'),
+    dcc.Store(id= 'ticker')
+    ]    
+)
+
+#Placeholder Layouts 
+
+charts_layout = html.Div([html.H2("Charts Page- Placeholder")])
+
+
+
+################################################################################################
+#Layout of hte main app
 #https://www.dash-bootstrap-components.com/docs/quickstart/
 
-explain_text = """This Dashboard is a Work in progress to learn more Software engineering best practices. I test the code, use CI/CD workflows and build a robust 
-application. Feel free to pick any Stock you like and explore the tabs. The Github repository can be found under https://github.com/Steph-Z/stock_platform.
-\n I hope you enjoy as much as I did building the page."""
-
-app.layout = dbc.Container(
+app.layout = html.Div(
     [
-    html.H1("Stock Dashboard", style={'textAlign': 'center'}),    
-    dcc.Markdown(explain_text),
-    stock_input,
-    tabs,
-    html.Div(id = 'tab-content'),
-    stock_data_stored,
-    comp_name,
-    ticker,
+    dcc.Location(id='url', refresh=False),
+    navbar,
+    html.Div(id='page-content', style={"padding": "20px"}),
+    global_stores
+    ])
 
-    ], #short learning. a Div is a container for almost anything that flows and can be anything
-    fluid= True)
+#Collapsing the navbar
+@app.callback(Output("navbarcollapse", "is_open"),
+              Input("navbar-toggler", "n_clicks"),
+              State("navbarcollapse", "is_open")
+)
 
-#callback to retrieve stock data 
+def toggle_navbar(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+#callback to get the right page
+@app.callback(Output('page-content', 'children'), Input('url', 'pathname'))
+
+def display_page(path):
+    if path == '/charts':
+        return charts_layout
+    else:
+        return home_layout
+
+#callback to retrieve stock data based on the userinput
 @app.callback(
     Output('stockdata', 'data'),
     Output('name_company', 'data'),
     Output('ticker', 'data'),
-    Input('Stockselection', 'value')
+    Output('current_stock', 'children'),
+    State('Stockselection', 'value',),
+    Input('stockbutton', 'n_clicks')
 )
 
-def retrieve_stock_data(stock_input_value):
+def retrieve_stock_data(stock_input_value, n_clicks):
     if not stock_input_value:
-        return [], None
-    
-    normed_stock_input =  input_case_insensitive(remove_dashes(stock_input_value))
-    ticker = isin_ticker_to_ticker(normed_stock_input) #ToDo more robust
-    data = prepare_stock_data(ticker) #To do more robust
-    #get the company name for display purposes throuout the app
-    comp_name = yf.Ticker(ticker).info['displayName']
-    
-    return data.to_dict('records'), comp_name,ticker
-    
-    
-    
-#Callback to switch tabs
-@app.callback(
-    Output('tab-content', 'children'),
-    Input('tabs', 'active_tab')
-)
+        return [], None, None, 'Invalid'
 
-def render_tab_content(active_tab):
-    if active_tab == 'home':
-        return landingpage.layout()
-    elif active_tab == 'plots':
-        return plotpage.layout()
-    return 'No Tab selected'
+    try:    
+        normed_stock_input =  input_case_insensitive(remove_dashes(stock_input_value))
+        ticker = isin_ticker_to_ticker(normed_stock_input) #ToDo more robust
+        data = prepare_stock_data(ticker) #To do more robust
+        #get the company name for display purposes throuout the app
+        comp_name = yf.Ticker(ticker).info['displayName']
+        
+        return data.to_dict('records'), comp_name,ticker, f'Currently Selected: {comp_name}'
+    except Exception:
+        return [], None, None, 'Invalid'
+    
+    
+    
+
 
 #not needed anymore since I introcuded a main.py as a convinient entry point
 ##general rule; here we run in debug = True, in main we do not
 if __name__ == "__main__":
     app.run(debug = True)
+    
+    
+
+
+
+
+
  
