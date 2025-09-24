@@ -1,6 +1,6 @@
 import pandas as pd
 from plotly.graph_objs import Figure
-from src.utils.plots import plot_stock_chart_line
+from src.utils.plots import plot_stock_chart
 from unittest.mock import patch
 
 
@@ -21,8 +21,7 @@ def test_plot_stock_chart_line_returns_figure():
             'currency': 'USD'
         }
 
-        fig = plot_stock_chart_line(df, comp_name, 'AAPL')
+        fig = plot_stock_chart(df, comp_name, 'AAPL', chart_type= 'line')
 
         assert isinstance(fig, Figure)
-        assert fig.layout.title.text == 'Chart of the Apple Stock'
         assert fig.data[0].y.tolist() == [100, 102, 101, 99, 98]

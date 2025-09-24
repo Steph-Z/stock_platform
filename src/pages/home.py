@@ -1,5 +1,6 @@
 from dash import html, dcc
 import dash_bootstrap_components as dbc
+from utils.config import pad_for_centering
 
 #Layout main Page 
 explain_text_german = """Hallo liebe Besucher:innen! 
@@ -38,7 +39,7 @@ Although I am german, english is the language used write and document code most 
 #The standard centering does not work here. So I need a Div in the col to account for that behavior. 
 #The dummy LAyout for all future single col content that should e centered on the page is: 
 #Since this might change if I introduce new sides we set it as a variable:
-pad_for_centering = '256px'
+
 layout = dbc.Container([
     dbc.Row(
         dbc.Col(
