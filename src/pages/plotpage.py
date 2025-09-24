@@ -22,7 +22,7 @@ timeframe_buttons = html.Div(
                 dbc.Col(dbc.Button("3M", id="btn-3m", outline=True, className="timeframe-btn w-100"), width=4),
                 dbc.Col(dbc.Button("6M", id="btn-6m", outline=True, className="timeframe-btn w-100"), width=4),
             ],
-            className="mb-2",  # spacing between rows
+            className="mb-2",  #DAMN i just found out about button groups a little later. this would have been need here. Bu ill not reimplement for now :( 
         ),
         dbc.Row(
             [
@@ -56,6 +56,9 @@ sidebar = html.Div(
             clearable=False,
             style={"margin-bottom": "1rem", "width": "100%", "textcolor": "black"}
         ),
+        html.Hr(),
+        html.Label('Y-axis scale:'),
+        dcc.RadioItems(['Linear', 'Log'], 'Linear', id = 'axis_scaling', inline= True, labelStyle= {'margin-right': '8px'}, style= {'font-size': 14})
     ],
     style={
         "backgroundColor": "#36536f",
@@ -105,7 +108,7 @@ layout = dbc.Container([
 @callback(
     Output('stocklineplot', 'figure'),
     Output('plot_headline', 'children'),
-    
+    Input('axis_scaling', 'value'),
     Input("btn-1m", "n_clicks"),
     Input("btn-3m", "n_clicks"),
     Input("btn-6m", "n_clicks"),
@@ -117,7 +120,7 @@ layout = dbc.Container([
     Input('ticker', 'data'),
     Input('chart-type-input', 'value')
 )
-def update_stock_plot(btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_input_value, stock_data_records,ticker, chart_type):
+def update_stock_plot(axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_input_value, stock_data_records,ticker, chart_type):
     #to find out which button ws used: https://dash.plotly.com/advanced-callbacks
     #ctx
     if not stock_input_value or not stock_data_records:
@@ -159,8 +162,12 @@ def update_stock_plot(btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_input_value, 
             #automatically scale Y
             y_min = df.loc[df['Date'].between(start_date, end_date), 'Close'].min()*0.9
             y_max = df.loc[df['Date'].between(start_date, end_date), 'Close'].max()*1.1
+            
             fig.update_xaxes(range=xaxis_range)
-            fig.update_yaxes(range= [y_min, y_max])
+            if axis_type.lower() == 'linear':
+                fig.update_yaxes(range= [y_min, y_max]) 
+                          
+    fig.update_yaxes(type = axis_type.lower())
 
     return fig, f'Interactive plot of the {stock_input_value} stock'
 
