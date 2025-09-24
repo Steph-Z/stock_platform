@@ -15,7 +15,7 @@ from pages.home import layout as  home_layout
 #use bootstrap to make it easiert to build a pretty application 
 #https://www.dash-bootstrap-components.com/docs/themes/
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.CYBORG],  suppress_callback_exceptions= True)
+app = Dash(__name__, external_stylesheets=[dbc.themes.DARKLY],  suppress_callback_exceptions= True)
 app.title = 'Stock Dashboard'
 #To host the app
 server = app.server
