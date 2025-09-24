@@ -1,5 +1,6 @@
 from dash import html, dcc
 import dash_bootstrap_components as dbc
+from utils.config import pad_for_centering
 
 #Layout main Page 
 explain_text_german = """Hallo liebe Besucher:innen! 
@@ -38,7 +39,7 @@ Although I am german, english is the language used write and document code most 
 #The standard centering does not work here. So I need a Div in the col to account for that behavior. 
 #The dummy LAyout for all future single col content that should e centered on the page is: 
 #Since this might change if I introduce new sides we set it as a variable:
-pad_for_centering = '256px'
+
 layout = dbc.Container([
     dbc.Row(
         dbc.Col(
@@ -82,9 +83,8 @@ layout = dbc.Container([
             dbc.Accordion([
                 dbc.AccordionItem(
                     [
-                        dcc.Markdown("""Currently (24.09.2025) I worked on an overhaul of the Layout (which you can see right now). But for that I removed most of the functionallity for now.
-                                     Please come back tomorrow. Or have a look at the Repo to see the inner workings of the Side as well as the CI/CD Pipeline used to automatically deploy new versions. 
-                                     Thank you for understanding!""", className='text-center')
+                        dcc.Markdown("""Currently (24.09.2025) I worked on an overhaul of the Layout (which you can see right now). The Plot/Charts Tab is almost ready. Bu I want to work on a lot more features (A more thourough test setup of the app and a cache for some tickers are next). Have a look at the Repo to see the inner workings of the Side as well as the CI/CD Pipeline used to automatically deploy new versions. 
+                                     Enjoy!""", className='text-center')
                     ],
                     title=html.H3('What you can do on this Side/Dashboard', className='text-center'),
                     item_id='contentgeneral'

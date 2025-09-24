@@ -7,10 +7,12 @@ from utils.transforms import isin_ticker_to_ticker, prepare_stock_data
 
 #Import of the LAyouts of other sides 
 from pages.home import layout as  home_layout
+from pages.plotpage import layout as chart_layout
 
 
 ################################################
 #Initializing the app
+
 
 #use bootstrap to make it easiert to build a pretty application 
 #https://www.dash-bootstrap-components.com/docs/themes/
@@ -73,11 +75,11 @@ stock_input = html.Div(
 page_links = dbc.Nav(
     [
         dbc.NavItem(dbc.NavLink('Home', href='/', active='exact')),
-        dbc.NavItem(dbc.NavLink('Charts', href='/charts', active='exact')),
+        dbc.NavItem(dbc.NavLink('Plots/Tables', href='/charts', active='exact')),
     ],
     pills=True,
     navbar=True,
-    class_name='ms-2'
+    className='ms-2'
 )
 
 navbar = dbc.Navbar(
@@ -115,12 +117,6 @@ global_stores = html.Div(
     ]    
 )
 
-#Placeholder Layouts 
-
-charts_layout = html.Div([html.H2("Charts Page- Placeholder")])
-
-
-
 ################################################################################################
 #Layout of hte main app
 #https://www.dash-bootstrap-components.com/docs/quickstart/
@@ -149,7 +145,7 @@ def toggle_navbar(n, is_open):
 
 def display_page(path):
     if path == '/charts':
-        return charts_layout
+        return chart_layout
     else:
         return home_layout
 
