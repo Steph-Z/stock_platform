@@ -83,9 +83,8 @@ layout = dbc.Container([
             dbc.Accordion([
                 dbc.AccordionItem(
                     [
-                        dcc.Markdown("""Currently (24.09.2025) I worked on an overhaul of the Layout (which you can see right now). But for that I removed most of the functionallity for now.
-                                     Please come back tomorrow. Or have a look at the Repo to see the inner workings of the Side as well as the CI/CD Pipeline used to automatically deploy new versions. 
-                                     Thank you for understanding!""", className='text-center')
+                        dcc.Markdown("""Currently (24.09.2025) I worked on an overhaul of the Layout (which you can see right now). The Plot/Charts Tab is almost ready. Bu I want to work on a lot more features. Have a look at the Repo to see the inner workings of the Side as well as the CI/CD Pipeline used to automatically deploy new versions. 
+                                     Enjoy!""", className='text-center')
                     ],
                     title=html.H3('What you can do on this Side/Dashboard', className='text-center'),
                     item_id='contentgeneral'
