@@ -1,9 +1,15 @@
 from dash import Dash, dcc, html, Input, Output, State, no_update
 import dash_bootstrap_components as dbc
 import yfinance as yf
+import plotly.graph_objects as go
+import plotly.io as pio
+
+
+
 
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
 from utils.transforms import isin_ticker_to_ticker, prepare_stock_data
+from utils.config import flatly_colors
 
 #Import of the LAyouts of other sides 
 from pages.home import layout as  home_layout
@@ -12,12 +18,26 @@ from pages.plotpage import layout as chart_layout
 
 ################################################
 #Initializing the app
+#setting the colors for figures to have coherent look
+flatly_dark_template = go.layout.Template(
+    layout=go.Layout(
+        paper_bgcolor=flatly_colors["background"],
+        plot_bgcolor=flatly_colors["background"],
+        font=dict(color=flatly_colors["light"]),
+        xaxis=dict(showgrid=True, gridcolor=flatly_colors["secondary"]),
+        yaxis=dict(showgrid=True, gridcolor=flatly_colors["secondary"])
+    )
+)
+
+# Register and set as default
+pio.templates["flatly_dark"] = flatly_dark_template
+pio.templates.default = "flatly_dark"
 
 
 #use bootstrap to make it easiert to build a pretty application 
 #https://www.dash-bootstrap-components.com/docs/themes/
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.CYBORG],  suppress_callback_exceptions= True)
+app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY],  suppress_callback_exceptions= True)
 app.title = 'Stock Dashboard'
 #To host the app
 server = app.server
@@ -32,6 +52,7 @@ server = app.server
 #Title/Nav Text
 perma_text = 'Plotpoint'
 perma_subtext ='by Steph'
+
 
 #Stock input 
 stock_input = html.Div(
@@ -49,11 +70,12 @@ stock_input = html.Div(
                         placeholder='ISIN/Ticker',
                         value='US0378331005',
                         size='sm',
+                        class_name= ('bg-light text-dark')
                     ),
                     width='auto',
                 ),
                 dbc.Col(
-                    dbc.Button('Enter', id='stockbutton', color='primary', size='sm', className='ms-auto'),
+                    dbc.Button('Enter', id='stockbutton', color='secondary', size='sm', className='ms-auto'),
                     width='auto',
                 ),
             ],
@@ -101,7 +123,7 @@ navbar = dbc.Navbar(
         className='w-100 g-2'),
         fluid=True
     ),
-    color='dark',
+    color='primary',
     dark=True,
     sticky='top'
 )

@@ -1,5 +1,8 @@
 from dash import html, dcc, Input, Output, callback, State, ctx
 import plotly.express as px
+import plotly.graph_objects as go
+import plotly.io as pio
+
 import dash_bootstrap_components as dbc
 import pandas as pd
 
@@ -7,8 +10,24 @@ from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insen
 from utils.plots import plot_stock_chart
 from utils.misc import colors
 from utils.transforms import decode_records_data
-from utils.config import pad_for_centering
+from utils.config import flatly_colors
 
+####
+#set figures to dark figures
+#setting the colors for figures to have coherent look
+flatly_dark_template = go.layout.Template(
+    layout=go.Layout(
+        paper_bgcolor=flatly_colors["background"],
+        plot_bgcolor=flatly_colors["background"],
+        font=dict(color=flatly_colors["light"]),
+        xaxis=dict(showgrid=True, gridcolor=flatly_colors["secondary"]),
+        yaxis=dict(showgrid=True, gridcolor=flatly_colors["secondary"])
+    )
+)
+
+# Register and set as default
+pio.templates["flatly_dark"] = flatly_dark_template
+pio.templates.default = "flatly_dark"
 #Dexamples in documentations are a lovely thing: https://www.dash-bootstrap-components.com/examples/simple-sidebar/
 #https://www.dash-bootstrap-components.com/examples/iris/
 #I can sadly not use a sidebar here, since its main purpose is side navigation and not background (input only for one side) things.
@@ -41,7 +60,7 @@ sidebar = html.Div(
         html.Hr(),
         html.Label("Select Timeframe:"),
         timeframe_buttons,
-        html.Span('The Plot is inteactive! Click and drag your mouse to view a custom window.'),
+        html.Span('The Plot is interactive! Click and drag your mouse to view a custom window.'),
         html.Span('Double click in the plot to reset it.'),
         html.Hr(),        
         html.Label("Chart Type:"),
@@ -61,7 +80,6 @@ sidebar = html.Div(
         dcc.RadioItems(['Linear', 'Log'], 'Linear', id = 'axis_scaling', inline= True, labelStyle= {'margin-right': '8px'}, style= {'font-size': 14})
     ],
     style={
-        "backgroundColor": "#36536f",
         "color": "white",
         "padding": "1rem",
         "position": "fixed", 
@@ -78,7 +96,7 @@ plot_table = html.Div(
     [   
         html.H4(id ='plot_headline'),
         dbc.Row(
-            dbc.Col(dcc.Graph(id="stocklineplot", figure={}), width=10),
+            dbc.Col(dcc.Graph(id="stocklineplot", figure=go.Figure(layout=go.Layout(template="flatly_dark"))), width=10),
             style={"height": "65vh"}
         ),
         html.Hr(),
@@ -120,23 +138,17 @@ layout = dbc.Container([
     Input('ticker', 'data'),
     Input('chart-type-input', 'value')
 )
+
 def update_stock_plot(axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_input_value, stock_data_records,ticker, chart_type):
     #to find out which button ws used: https://dash.plotly.com/advanced-callbacks
     #ctx
     if not stock_input_value or not stock_data_records:
-        return {}
+        
+        empty_fig = go.Figure()
+        return empty_fig, f'Interactive plot of the {stock_input_value} stock'
     
     df =decode_records_data(stock_data_records)
     fig = plot_stock_chart(df, comp_name= stock_input_value, ticker= ticker, chart_type= chart_type)
-    
-     # Apply consistent color scheme
-    fig.update_layout(
-        
-        template = 'plotly_dark',
-        xaxis=dict(gridcolor=colors['chart_gridcolor']),
-        yaxis=dict(gridcolor=colors['chart_gridcolor']),
-        font_color = colors['text']
-    )
     
     #Update the figure if a button is pressed:
     triggered = ctx.triggered_id
