@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 import yfinance as yf
 import plotly.graph_objects as go
 import plotly.io as pio
-
+import logging
 
 
 
@@ -15,6 +15,13 @@ from utils.config import flatly_colors
 from pages.home import layout as  home_layout
 from pages.plotpage import layout as chart_layout
 
+###############Logging for debugging#########
+
+logging.basicConfig(
+    level=logging.INFO, 
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+#logger = logging.getLogger(__name__)
 
 ################################################
 #Initializing the app
@@ -183,18 +190,19 @@ def display_page(path):
 
 def retrieve_stock_data(stock_input_value, n_clicks):
     if not stock_input_value:
-        return [], None, None, 'Invalid'
+        return [], None, None, 'Invalid, No Input detected'
 
     try:    
         normed_stock_input =  input_case_insensitive(remove_dashes(stock_input_value))
         ticker = isin_ticker_to_ticker(normed_stock_input) #ToDo more robust
         data = prepare_stock_data(ticker) #To do more robust
         #get the company name for display purposes throuout the app
-        comp_name = yf.Ticker(ticker).info['displayName']
+        #PROBLEM: some international tickers do not have the displayNAme (like adidas) so we need something more robust here 
+        comp_name = comp_name = yf.Ticker(ticker).info.get('displayName') or yf.Ticker(ticker).info.get('shortName') or yf.Ticker(ticker).info.get('longName') or ticker
         
         return data.to_dict('records'), comp_name,ticker, f'Company Name: {comp_name}'
     except Exception:
-        return [], None, None, 'Invalid'
+        return [], None, None, f'Invalid: {normed_stock_input} is not a valid ticker or ISIN {ticker}'
     
     
     

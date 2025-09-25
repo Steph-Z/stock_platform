@@ -1,5 +1,9 @@
 import yfinance as yf
 import re
+import logging
+
+
+
 
 def input_case_insensitive(isin_input):
     '''returns a case insensitive version of the user input'''
@@ -75,7 +79,7 @@ def check_ticker(user_input: str, check_function = None):
     if check_function is None:
         check_function = yf.Ticker
     try:
-        if check_function(user_input).info['regularMarketPrice'] is not None:
+        if check_function(user_input).info.get['regularMarketPrice'] is not None:
             return True
         else: 
             return False
@@ -93,7 +97,7 @@ def check_isin_ticker_input(user_input:str, check_function = None):
         return False
     
     preprocess_input = input_case_insensitive(remove_dashes(user_input))
-    
+
     if preprocess_input == '':
         return False
     

@@ -84,7 +84,22 @@ sidebar = html.Div(
         html.Label('Y-axis scale:'),
         dbc.RadioItems(['Linear', 'Log'], 'Linear', id = 'axis_scaling', inline= True,
                        labelStyle= {'margin-right': '8px'},
-                       style= {'font-size': 14})
+                       style= {'font-size': 14}),
+        html.Hr(),
+        html.Label("Example Tickers (in case you don’t know your favorite company’s ticker):", className="mt-3 fw-bold"),
+        html.Ul([
+            html.Li("Apple: AAPL or US0378331005"),
+            html.Li("Microsoft: MSFT or US5949181045"),
+            html.Li("Nvidia: NVDA or US67066G1040"),
+            html.Li("AMD: AMD or US0079031078"),
+            html.Li("Adidas: ADS.DE or DE000A1EWWW0"),
+            html.Li("SAP: SAP.DE or  DE0007164600"),
+            html.Li("Infineon: IFX.DE or DE0006231004"),
+            html.Li("ASML: ASML or NL0010273215")
+        ], style={"fontSize": "14px", "paddingLeft": "1rem"}),
+        html.Label('Try to break the input system by using weird spacings or similar. Let me know if I missed something!')
+        
+        
     ],
     style={
         "color": "white",
