@@ -3,7 +3,8 @@ import dash_bootstrap_components as dbc
 from utils.config import flatly_colors
 
 #Layout main Page 
-explain_text_german = """Hallo liebe Besucher:innen! 
+explain_text_german = """
+### Hallo liebe Besucher:innen! 
 
 Mein Name ist Stephan und ich habe vor kurzem meinen Master in Data Science abgeschlossen.
 Diese Seite/ Dasboard ist ein "passion project" um noch mehr über saubere Software und AI Engineering praktiken zu lernen.
@@ -11,15 +12,23 @@ Nutzt gern die Menüs unter diesem Text um zu sehen welche Techniken ich dabei u
 
 https://github.com/Steph-Z/stock_platform 
 
+---
+
 **Bitte meldet euch bei mir falls ihr Anregungen oder Fragen jeglicher Art habt**
+
+---
 
 Da es in diesem Bereich Englisch die Sprache ist, die am meisten genutzt wird, ob fürs Coding an sich,
 Kommentare im Code aber auch die Zusammenarbeit mit internationalen Kolleg:innen, habe ich entschieden dieses Projekt auf Englisch zu verfassen.
+
+---
+
 **Ich hoffe ihr habt bei eurem Besuch auf dieser Seite genauso viel Spaß wie ich dabei hatte, diese Seite zu entwickeln** (außer das Zentrieren der html-Blöcke, das war kein Spaß)!
 
 """  
 
-explain_text_engl = """ Hello dear visitor!
+explain_text_engl = """ 
+### Hello dear visitor!
 
 My name is Stephan and I am a recent graduate with a Masters Degree in Data Science.
 This side/dashboard is a learning project to strengthen my ability with Software engineering best practices for Data Science and AI Engineerig.  
@@ -27,13 +36,75 @@ Use the menus below to find out more about the project. The code of the project 
 
 https://github.com/Steph-Z/stock_platform 
 
+---
+
 **Please feel free to reach out in case you have any suggestions!**
 
+---
+
 Although I am german, english is the language used write and document code most of the time. Additionally collaboration across international teams requires english as well. As a consequence, I decided to use english for this project.
+
+---
 
 **I hope you enjoy your visit on the page as much as I had building it** (except for centering the different blocks of the layout, that was pain)!
 """
 
+software_text = """
+#### Git/GitHub:  
+  I work on two branches: The main branch is always deployed (see CI/CD).  
+  On the working branch I update the app, and once I like the new state, I push to main.  
+  Since this project is done by myself, I don’t worry too much about committing every small local change immediately.
+
+---
+
+#### Testing:  
+  At the moment, I’m using a small set of unit tests and a basic integration test for the Ticker/ISIN input.  
+  I set them up to minimize calls to yfinance using a custom checker during testing.  
+  Even in production, I try to reduce calls to yfinance by validating ISIN inputs using regular expressions and Luhn’s algorithm.  
+  In the coming days, I plan to add a test for the dashboard itself by emulating user inputs, so a more thorough integration test of the overall app.
+
+---
+
+#### CI/CD:  
+  This website is the CD part of a CI/CD pipeline.  
+  I use GitHub Actions to automatically run tests (including flake8) whenever I push to the main branch.  
+  Once tests pass successfully, Render deploys the updated version of the site.
+
+---
+
+#### Code Structure:  
+  I encourage you to look at the structure of the project.  
+  It’s set up to be scalable and reusable for others as well.  
+  I maintain a requirements.txt using pipreqs and the project is documented in a README, including a guide for local setup.
+
+---
+
+#### Caching Strategy (Planned):  
+  While not yet implemented, I plan to add caching for frequently requested tickers to reduce API calls and improve performance.
+"""
+
+what_you_can_do = """
+#### Plots/Tables Section:  
+You can explore different stocks by entering their Ticker or ISIN.  
+The dashboard displays a chart of the last 5 years and a table showing recent trading data.  
+Feel free to test it out directly in the Plots/Charts tab.
+
+---
+
+#### Upcoming Features:  
+I’m actively working on expanding the dashboard’s functionality.  
+Here are the next major improvements I plan to implement:
+
+**Caching for selected stocks**  
+Improve responsiveness and reduce API calls by storing frequently accessed data.
+
+**Enhanced testing**  
+Add full integration tests that emulate user inputs across the dashboard.
+
+**LLM-analysis tab**  
+Answer questions about the selected stock and generate mock stock analysis.  
+This will help me learn how to build and integrate a backend for LLMs into real-world products."""
+  
 #The Container for the pages content. A Row vor each Contents row and a column so I can have a multi column layout as well as center everything on the page 
 #Problem is: the NAVBAR; Since it uses a combination of different object with different paddings 
 #The standard centering does not work here. So I need a Div in the col to account for that behavior. 
@@ -84,8 +155,7 @@ layout = dbc.Container([
             dbc.Accordion([
                 dbc.AccordionItem(
                     [
-                        dcc.Markdown("""Currently (24.09.2025) I worked on an overhaul of the Layout (which you can see right now). The Plot/Charts Tab is almost ready. Bu I want to work on a lot more features (A more thourough test setup of the app and a cache for some tickers are next). Have a look at the Repo to see the inner workings of the Side as well as the CI/CD Pipeline used to automatically deploy new versions. 
-                                     Enjoy!""", className='text-center', style= {"color": flatly_colors["light"]})
+                        dcc.Markdown(what_you_can_do, className='text-center', style= {"color": flatly_colors["light"]})
                     ],
                     title=html.H3('What you can do on this Side/Dashboard', className='text-center'),
                     item_id='contentgeneral'
@@ -102,7 +172,7 @@ layout = dbc.Container([
             dbc.Accordion([
                 dbc.AccordionItem(
                     [
-                        dcc.Markdown('Software/AI engineering practises', className='text-center')
+                        dcc.Markdown(software_text, className='text-center')
                     ],
                     title=html.H3('Software/AI engineering practises', className='text-center'),
                     item_id='parctices'

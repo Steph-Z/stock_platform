@@ -1,6 +1,6 @@
 #global offset for titles to align with navbar
 pad_for_centering = '256px'
-
+#https://bootswatch.com/flatly/
 flatly_colors = {
     "primary": "#2c3e50",
     "secondary": "#95a5a6",
