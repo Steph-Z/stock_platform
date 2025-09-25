@@ -37,17 +37,17 @@ timeframe_buttons = html.Div(
     [
         dbc.Row(
             [
-                dbc.Col(dbc.Button("1M", id="btn-1m", outline=True, className="timeframe-btn w-100"), width=4),
-                dbc.Col(dbc.Button("3M", id="btn-3m", outline=True, className="timeframe-btn w-100"), width=4),
-                dbc.Col(dbc.Button("6M", id="btn-6m", outline=True, className="timeframe-btn w-100"), width=4),
+                dbc.Col(dbc.Button("1M", id="btn-1m", outline=True, className="btn btn-light w-100"), width=4),
+                dbc.Col(dbc.Button("3M", id="btn-3m", outline=True, className="btn btn-light w-100"), width=4),
+                dbc.Col(dbc.Button("6M", id="btn-6m", outline=True, className="btn btn-light w-100"), width=4),
             ],
             className="mb-2",  #DAMN i just found out about button groups a little later. this would have been need here. Bu ill not reimplement for now :( 
         ),
         dbc.Row(
             [
-                dbc.Col(dbc.Button("1Y", id="btn-1y",outline=True, className="timeframe-btn w-100"), width=4),
-                dbc.Col(dbc.Button("3Y", id="btn-3y",outline=True, className="timeframe-btn w-100"), width=4),
-                dbc.Col(dbc.Button("5Y", id="btn-5y",outline=True, className="timeframe-btn w-100"), width=4),
+                dbc.Col(dbc.Button("1Y", id="btn-1y",outline=True, className="btn btn-light w-100"), width=4),
+                dbc.Col(dbc.Button("3Y", id="btn-3y",outline=True, className="btn btn-light w-100"), width=4),
+                dbc.Col(dbc.Button("5Y", id="btn-5y",outline=True, className="btn btn-light w-100"), width=4),
             ]
         ),
     ]
@@ -73,11 +73,18 @@ sidebar = html.Div(
             ],
             value="line",
             clearable=False,
-            style={"margin-bottom": "1rem", "width": "100%", "textcolor": "black"}
+             style={
+                "margin-bottom": "1rem",
+                "width": "100%",
+                "backgroundColor": flatly_colors["light"], 
+                "color": flatly_colors["primary"]
+                }
         ),
         html.Hr(),
         html.Label('Y-axis scale:'),
-        dcc.RadioItems(['Linear', 'Log'], 'Linear', id = 'axis_scaling', inline= True, labelStyle= {'margin-right': '8px'}, style= {'font-size': 14})
+        dbc.RadioItems(['Linear', 'Log'], 'Linear', id = 'axis_scaling', inline= True,
+                       labelStyle= {'margin-right': '8px'},
+                       style= {'font-size': 14})
     ],
     style={
         "color": "white",

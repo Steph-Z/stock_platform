@@ -1,6 +1,6 @@
 from dash import html, dcc
 import dash_bootstrap_components as dbc
-from utils.config import pad_for_centering
+from utils.config import flatly_colors
 
 #Layout main Page 
 explain_text_german = """Hallo liebe Besucher:innen! 
@@ -46,14 +46,15 @@ layout = dbc.Container([
             dbc.Accordion([
                 dbc.AccordionItem(
                     [
-                        dcc.Markdown(explain_text_engl, className='text-center')
+                        dcc.Markdown(explain_text_engl, className='text-center', style= {"color": flatly_colors["light"]})
                     ],
                     title=html.Div([
                         html.H3("Introduction", className='text-center')
                     ]),
                     item_id="intro"
                 )
-            ], start_collapsed=False),
+            ], start_collapsed=False,
+                class_name="bg-light text-dark"),
             width=10,
             #style={'paddingRight': pad_for_centering}
         ),
@@ -66,7 +67,7 @@ layout = dbc.Container([
             dbc.Accordion([
                 dbc.AccordionItem(
                     [
-                        dcc.Markdown(explain_text_german, className='text-center')
+                        dcc.Markdown(explain_text_german, className='text-center', style= {"color": flatly_colors["light"]})
                     ],
                     title=html.H3("Einleitung", className='text-center'),
                     item_id="einleitung"
@@ -84,7 +85,7 @@ layout = dbc.Container([
                 dbc.AccordionItem(
                     [
                         dcc.Markdown("""Currently (24.09.2025) I worked on an overhaul of the Layout (which you can see right now). The Plot/Charts Tab is almost ready. Bu I want to work on a lot more features (A more thourough test setup of the app and a cache for some tickers are next). Have a look at the Repo to see the inner workings of the Side as well as the CI/CD Pipeline used to automatically deploy new versions. 
-                                     Enjoy!""", className='text-center')
+                                     Enjoy!""", className='text-center', style= {"color": flatly_colors["light"]})
                     ],
                     title=html.H3('What you can do on this Side/Dashboard', className='text-center'),
                     item_id='contentgeneral'
