@@ -170,6 +170,7 @@ def update_stock_plot(axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_in
         empty_fig = go.Figure()
         return empty_fig, f'Interactive plot of the {stock_input_value} stock'
     
+    
     df =decode_records_data(stock_data_records)
     fig = plot_stock_chart(df, comp_name= stock_input_value, ticker= ticker, chart_type= chart_type)
     
@@ -217,6 +218,7 @@ def update_stock_plot(axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_in
 def update_stock_table(stock_data, comp_name):
     if not stock_data:
         return [], []
+    stock_data =decode_records_data(stock_data)
     data = pd.DataFrame(stock_data).sort_index(ascending= False)
     if len(data) > 50:
         data = data.head(50)

@@ -93,3 +93,5 @@ cython_debug/
 *.vsix
 # Ruff stuff:
 .ruff_cache/
+
+notebooks/

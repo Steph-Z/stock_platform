@@ -1,5 +1,7 @@
 import yfinance as yf
 import pandas as pd
+from cachetools import TTLCache, cached
+
 
 def isin_ticker_to_ticker(ticker_isin:str):
     '''checks if the input is a ticker or Isin and returns the isin as a ticker for easy use with yfinance'''
@@ -9,8 +11,10 @@ def isin_ticker_to_ticker(ticker_isin:str):
         return ticker.ticker
     else:
         return ticker_isin
-    
-    
+ 
+
+_stock_cache = TTLCache(maxsize=10, ttl= 600)    
+@cached(_stock_cache) 
 def prepare_stock_data(ticker):
     '''Uses a Ticker, NOT ISIN to download the stock data and preprocesses it into the standard format expected by other functions'''
     
