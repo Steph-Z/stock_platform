@@ -74,13 +74,13 @@ software_text = """
 
 #### Code Structure:  
   I encourage you to look at the structure of the project.  
-  It’s set up to be scalable and reusable for others as well.  
+  It's set up to be scalable and reusable for others as well.  
   I maintain a requirements.txt using pipreqs and the project is documented in a README, including a guide for local setup.
 
 ---
 
-#### Caching Strategy (Planned):  
-  While not yet implemented, I plan to add caching for frequently requested tickers to reduce API calls and improve performance.
+#### Caching Strategy:  
+  A users Inputs/ Stock downloads are cached for up to 10 minutes for up to 10 Stocks. 
 """
 
 what_you_can_do = """
@@ -94,9 +94,6 @@ Feel free to test it out directly in the Plots/Charts tab.
 #### Upcoming Features:  
 I’m actively working on expanding the dashboard’s functionality.  
 Here are the next major improvements I plan to implement:
-
-**Caching for selected stocks**  
-Improve responsiveness and reduce API calls by storing frequently accessed data.
 
 **Enhanced testing**  
 Add full integration tests that emulate user inputs across the dashboard.
