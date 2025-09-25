@@ -33,9 +33,8 @@ For this project I am using:
 
 The app is hosted under:
 - https://stephs-plotpoint.onrender.com/
-- -On an initial Startup, the application might take a while to load (this is a result of renders free hosting service)
 - The dashboard is hosted through render. 
-- A BIG thank you goes to https://github.com/thusharabandara/dash-app-render-deployment for helping with a steep learning curve
+- A big thank you goes to https://github.com/thusharabandara/dash-app-render-deployment for helping with a steep learning curve
 
 ---
 
