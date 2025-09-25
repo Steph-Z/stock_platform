@@ -79,7 +79,7 @@ def check_ticker(user_input: str, check_function = None):
     if check_function is None:
         check_function = yf.Ticker
     try:
-        if check_function(user_input).info.get['regularMarketPrice'] is not None:
+        if check_function(user_input).info['regularMarketPrice'] is not None:
             return True
         else: 
             return False
