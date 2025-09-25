@@ -27,15 +27,15 @@ For this project I am using:
 - **pipreqs** - to manage the requirements.txt
 - **gunicorn** - as a HTTP server
 - **Render** - to host the dashboard
+- **cachetools** - for caching some data of a session
 ---
 
 ##  Deployment
 
 The app is hosted under:
 - https://stephs-plotpoint.onrender.com/
-- -On an initial Startup, the application might take a while to load (this is a result of renders free hosting service)
 - The dashboard is hosted through render. 
-- A BIG thank you goes to https://github.com/thusharabandara/dash-app-render-deployment for helping with a steep learning curve
+- A big thank you goes to https://github.com/thusharabandara/dash-app-render-deployment for helping with a steep learning curve
 
 ---
 
@@ -43,8 +43,7 @@ The app is hosted under:
 
 - Search for stocks via **ISIN or Tracker** (or ticker symbol).  
 - Visualize price history with different **chart types** (line, candlestick, etc.).  
-- Access **metrics** like volatility and returns.  
-- Choose from **predefined timeframes** (7d, 30d, 1y) or set a **custom date range**.  
+- Choose from **predefined timeframes** or interact with the charts
 
 ---
 

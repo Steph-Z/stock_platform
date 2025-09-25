@@ -4,11 +4,14 @@ import yfinance as yf
 import plotly.graph_objects as go
 import plotly.io as pio
 import logging
+import pandas as pd
+#adding a cash
 
 
 
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
 from utils.transforms import isin_ticker_to_ticker, prepare_stock_data
+
 from utils.config import flatly_colors
 
 #Import of the LAyouts of other sides 
@@ -49,7 +52,6 @@ app.title = 'Stock Dashboard'
 #To host the app
 server = app.server
 
-
 ################################################
 #Navbar Definition
 #Input section for the stock, shared across different sides of the navbar
@@ -77,6 +79,7 @@ stock_input = html.Div(
                         placeholder='ISIN/Ticker',
                         value='US0378331005',
                         size='sm',
+                        debounce = True,
                         class_name= ('bg-light text-dark')
                     ),
                     width='auto',
@@ -185,7 +188,7 @@ def display_page(path):
     Output('ticker', 'data'),
     Output('current_stock', 'children'),
     Input('stockbutton', 'n_clicks'),
-    State('Stockselection', 'value',)
+    Input('Stockselection', 'value',)
 )
 
 def retrieve_stock_data( n_clicks, stock_input_value):
@@ -195,14 +198,17 @@ def retrieve_stock_data( n_clicks, stock_input_value):
     try:    
         normed_stock_input =  input_case_insensitive(remove_dashes(stock_input_value))
         ticker = isin_ticker_to_ticker(normed_stock_input) #ToDo more robust
-        data = prepare_stock_data(ticker) #To do more robust
+        data = prepare_stock_data(ticker) #To do more robust, data is in json format here 
+        
+        if data.empty:            
+            return [], None, None, f'Input: {normed_stock_input} exists, but no data is available'
         #get the company name for display purposes throuout the app
         #PROBLEM: some international tickers do not have the displayNAme (like adidas) so we need something more robust here 
         comp_name = comp_name = yf.Ticker(ticker).info.get('displayName') or yf.Ticker(ticker).info.get('shortName') or yf.Ticker(ticker).info.get('longName') or ticker
         
         return data.to_dict('records'), comp_name,ticker, f'Company Name: {comp_name}'
     except Exception:
-        return [], None, None, f'Invalid: {normed_stock_input} is not a valid ticker or ISIN {ticker}'
+        return [], None, None, f'Invalid: {normed_stock_input} is not a valid ticker or ISIN'
     
     
     

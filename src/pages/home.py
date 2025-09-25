@@ -42,7 +42,7 @@ https://github.com/Steph-Z/stock_platform
 
 ---
 
-Although I am german, english is the language used write and document code most of the time. Additionally collaboration across international teams requires english as well. As a consequence, I decided to use english for this project.
+Although I am german, english is the language used to write and document code most of the time. Additionally collaboration across international teams requires english as well. As a consequence, I decided to use english for this project.
 
 ---
 
@@ -52,7 +52,7 @@ Although I am german, english is the language used write and document code most 
 software_text = """
 #### Git/GitHub:  
   I work on two branches: The main branch is always deployed (see CI/CD).  
-  On the working branch I update the app, and once I like the new state, I push to main.  
+  On the working branch I update the app and once I like the new state, I push to main.  
   Since this project is done by myself, I don’t worry too much about committing every small local change immediately.
 
 ---
@@ -60,7 +60,7 @@ software_text = """
 #### Testing:  
   At the moment, I’m using a small set of unit tests and a basic integration test for the Ticker/ISIN input.  
   I set them up to minimize calls to yfinance using a custom checker during testing.  
-  Even in production, I try to reduce calls to yfinance by validating ISIN inputs using regular expressions and Luhn’s algorithm.  
+  Even in production I try to reduce calls to yfinance by validating ISIN inputs using a regular expression and Luhn's algorithm.  
   In the coming days, I plan to add a test for the dashboard itself by emulating user inputs, so a more thorough integration test of the overall app.
 
 ---
@@ -74,13 +74,13 @@ software_text = """
 
 #### Code Structure:  
   I encourage you to look at the structure of the project.  
-  It’s set up to be scalable and reusable for others as well.  
+  It's set up to be scalable and reusable for others as well.  
   I maintain a requirements.txt using pipreqs and the project is documented in a README, including a guide for local setup.
 
 ---
 
-#### Caching Strategy (Planned):  
-  While not yet implemented, I plan to add caching for frequently requested tickers to reduce API calls and improve performance.
+#### Caching Strategy:  
+  A users Inputs/ Stock downloads are cached for up to 10 minutes for up to 10 Stocks. 
 """
 
 what_you_can_do = """
@@ -94,9 +94,6 @@ Feel free to test it out directly in the Plots/Charts tab.
 #### Upcoming Features:  
 I’m actively working on expanding the dashboard’s functionality.  
 Here are the next major improvements I plan to implement:
-
-**Caching for selected stocks**  
-Improve responsiveness and reduce API calls by storing frequently accessed data.
 
 **Enhanced testing**  
 Add full integration tests that emulate user inputs across the dashboard.
