@@ -42,7 +42,7 @@ sidebar = html.Div(
         html.Label("Select Timeframe:"),
         timeframe_buttons,
         html.Span('The Plot is inteactive! Click and drag your mouse to view a custom window.'),
-        html.Span('Doubleclick in the plot to reset it.'),
+        html.Span('Double click in the plot to reset it.'),
         html.Hr(),        
         html.Label("Chart Type:"),
         dcc.Dropdown(
@@ -131,8 +131,8 @@ def update_stock_plot(axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_in
     
      # Apply consistent color scheme
     fig.update_layout(
-        plot_bgcolor="rgba(0,0,0,0)",   #workaround for plots, make the transparent in the layout 
-        paper_bgcolor="rgba(0,0,0,0)",   
+        
+        template = 'plotly_dark',
         xaxis=dict(gridcolor=colors['chart_gridcolor']),
         yaxis=dict(gridcolor=colors['chart_gridcolor']),
         font_color = colors['text']
