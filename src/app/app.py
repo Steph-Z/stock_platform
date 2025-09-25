@@ -184,11 +184,11 @@ def display_page(path):
     Output('name_company', 'data'),
     Output('ticker', 'data'),
     Output('current_stock', 'children'),
-    State('Stockselection', 'value',),
-    Input('stockbutton', 'n_clicks')
+    Input('stockbutton', 'n_clicks'),
+    State('Stockselection', 'value',)
 )
 
-def retrieve_stock_data(stock_input_value, n_clicks):
+def retrieve_stock_data( n_clicks, stock_input_value):
     if not stock_input_value:
         return [], None, None, 'Invalid, No Input detected'
 
