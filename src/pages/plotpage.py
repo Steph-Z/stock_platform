@@ -115,35 +115,65 @@ sidebar = html.Div(
 )
 #Plot and Table definition:
 
-plot_table = html.Div(
-    [   
-        html.H4(id ='plot_headline'),
+plot_layout = html.Div(
+    [
+        html.H4(id='plot_headline'),
         dbc.Row(
-            dbc.Col(dcc.Graph(id="stocklineplot", figure=go.Figure(layout=go.Layout(template="flatly_dark"))), width=10),
-            style={"height": "65vh"}
-        ),
-        html.Hr(),
-        html.H4(id ='table_headline'),
-        html.Br(),
-        dbc.Row(
-            dbc.Col(id = 'stock_table', width=10),
-            style={"height": "30vh"}
+            dbc.Col(
+                dcc.Graph(
+                    id="stocklineplot",
+                    figure=go.Figure(layout=go.Layout(template="flatly_dark"))
+                ),
+                width=12
+            )
         )
     ],
     style={
-        "margin-left": "18rem",  
+        "margin-left": "18rem",
         "padding": "1rem"
     }
 )
 
+#####Tabs layout 
+
+tabs = dbc.Tabs(
+    [
+        dbc.Tab(label="Table", tab_id="table"),
+        dbc.Tab(label="Metrics", tab_id="metrics"),
+        dbc.Tab(label="Ask an LLM", tab_id="llm")
+    ],
+    id="tabs",
+    active_tab="table",
+    style={
+        "margin-left": "18rem",   # push it to the right of the sidebar
+        "padding": "1rem"
+    }
+)
+###########
+table_layout = html.Div(
+    [   html.H4(id='table_headline'),
+        html.Br(),
+        dbc.Row(
+            dbc.Col(id='stock_table', width=12))
+    ],
+    style={
+        "margin-left": "18rem",
+        "padding": "1rem"
+    }
+)
+
+# Main page layout now just combines them
 layout = dbc.Container([
     dbc.Row([
         sidebar,
-        plot_table        
+        dbc.Col([
+            plot_layout,          # plot always visible
+            tabs,                 # tabs under the plot
+            html.Div(id="tab-content")  # placeholder for tab content
+        ])
     ], className="g-0")
 ], fluid=True,
- style= {"overflowX": "hidden",
-         "overflowY": "hidden"})
+ style={"overflowX": "hidden", "overflowY": "hidden"})
 
 #Callback to update the plot bassed on the selected stock and data 
 @callback(
@@ -245,3 +275,17 @@ def update_stock_table(stock_data, comp_name):
     )
 
     return f'Detailed information about {comp_name}\'s last 50 trading days',scrollable_table
+
+
+@callback(
+    Output("tab-content", "children"),
+    Input("tabs", "active_tab")
+)
+def render_tab_content(active_tab):
+    if active_tab == "table":
+        return table_layout
+    elif active_tab == 'metrics':
+        return html.Div(dcc.Markdown('Metrics coming soon',style={"margin-left": "18rem","padding": "1rem"}))
+    elif active_tab == 'llm':
+        return html.Div(dcc.Markdown('LLM Queries coming soon',style={"margin-left": "18rem","padding": "1rem"}))
+    return html.Div("No content available.")
