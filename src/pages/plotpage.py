@@ -92,7 +92,6 @@ sidebar = html.Div(
             html.Li([html.B("Microsoft"), ": MSFT or US5949181045"]),
             html.Li([html.B("Nvidia"), ": NVDA or US67066G1040"]),
             html.Li([html.B("AMD"), ": AMD or US0079031078"]),
-            html.Li([html.B("Adidas"), ": ADS.DE or DE000A1EWWW0"]),
             html.Li([html.B("SAP"), ": SAP.DE or DE0007164600"]),
             html.Li([html.B("Infineon"), ": IFX.DE or DE0006231004"]),
             html.Li([html.B("ASML"), ": ASML or NL0010273215"])
