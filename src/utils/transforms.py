@@ -1,6 +1,7 @@
 import yfinance as yf
 import pandas as pd
 from cachetools import TTLCache, cached
+import re
 
 
 def isin_ticker_to_ticker(ticker_isin:str):
@@ -24,6 +25,13 @@ def prepare_stock_data(ticker):
    
     return data
 
+_stock_cache = TTLCache(maxsize=10, ttl= 600)    
+def get_stock_metadata(ticker):
+    '''downloads the metadata of the stock to display currency, names etc. grouped into one call to save resources'''
+    stock_metadata = yf.Ticker(ticker).info
+    
+    return stock_metadata
+
 
 def decode_records_data(data_records):
     '''uses the data saved as 'records' and decodes them int othe standard format of hte app.
@@ -33,3 +41,12 @@ def decode_records_data(data_records):
     data["Date"] = pd.to_datetime(data["Date"])
    
     return data
+
+def clean_comp_name(comp_name:str):
+    '''finds trailing letters behind company names to make naming more robust for international companies'''
+    #split name and put back together using single spaces
+    comp_name = " ".join(comp_name.split())
+    # remove single characters at the end 
+    comp_name = re.sub(r"\s+[A-Z0-9]$", "", comp_name)
+    
+    return comp_name

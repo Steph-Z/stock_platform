@@ -177,6 +177,7 @@ layout = dbc.Container([
 @callback(
     Output('stocklineplot', 'figure'),
     Output('plot_headline', 'children'),
+    Input('metadata', 'data'),
     Input('axis_scaling', 'value'),
     Input("btn-1m", "n_clicks"),
     Input("btn-3m", "n_clicks"),
@@ -190,7 +191,7 @@ layout = dbc.Container([
     Input('chart-type-input', 'value')
 )
 
-def update_stock_plot(axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_input_value, stock_data_records,ticker, chart_type):
+def update_stock_plot(metadata ,axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_input_value, stock_data_records,ticker, chart_type):
     #to find out which button ws used: https://dash.plotly.com/advanced-callbacks
     #ctx
     if not stock_input_value or not stock_data_records:
@@ -200,7 +201,7 @@ def update_stock_plot(axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_in
     
     
     df =decode_records_data(stock_data_records)
-    fig = plot_stock_chart(df, comp_name= stock_input_value, ticker= ticker, chart_type= chart_type)
+    fig = plot_stock_chart(df, comp_name= stock_input_value, ticker= ticker, chart_type= chart_type, metadata= metadata)
     
     #Update the figure if a button is pressed:
     triggered = ctx.triggered_id
@@ -232,6 +233,7 @@ def update_stock_plot(axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_in
                 fig.update_yaxes(range= [y_min, y_max]) 
                           
     fig.update_yaxes(type = axis_type.lower())
+    fig.update_layout(height =  600)
 
     return fig, f'Interactive plot of the {stock_input_value} stock'
 

@@ -10,7 +10,7 @@ import pandas as pd
 
 
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
-from utils.transforms import isin_ticker_to_ticker, prepare_stock_data
+from utils.transforms import isin_ticker_to_ticker, prepare_stock_data, get_stock_metadata, clean_comp_name
 
 from utils.config import flatly_colors
 
@@ -144,8 +144,10 @@ navbar = dbc.Navbar(
 global_stores = html.Div(
     [
     dcc.Store(id = 'stockdata'),
-    dcc.Store( id = 'name_company'),
-    dcc.Store(id= 'ticker')
+    dcc.Store( id = 'name_company'), #altough in metadata, depending on where the company is from its a different name [name_long],
+    #[name_short], sot this is easier to sore like that
+    dcc.Store(id= 'ticker'),
+    dcc.Store(id= 'metadata')
     ]    
 )
 
@@ -187,6 +189,7 @@ def display_page(path):
     Output('name_company', 'data'),
     Output('ticker', 'data'),
     Output('current_stock', 'children'),
+    Output('metadata', 'data'),
     Input('stockbutton', 'n_clicks'),
     Input('Stockselection', 'value',)
 )
@@ -199,16 +202,20 @@ def retrieve_stock_data( n_clicks, stock_input_value):
         normed_stock_input =  input_case_insensitive(remove_dashes(stock_input_value))
         ticker = isin_ticker_to_ticker(normed_stock_input) #ToDo more robust
         data = prepare_stock_data(ticker) #To do more robust, data is in json format here 
+        metadata = get_stock_metadata(ticker)
         
         if data.empty:            
-            return [], None, None, f'Input: {normed_stock_input} exists, but no data is available'
+            return [], None, None, f'Input: {normed_stock_input} exists, but no data is available', None
         #get the company name for display purposes throuout the app
         #PROBLEM: some international tickers do not have the displayNAme (like adidas) so we need something more robust here 
-        comp_name = comp_name = yf.Ticker(ticker).info.get('displayName') or yf.Ticker(ticker).info.get('shortName') or yf.Ticker(ticker).info.get('longName') or ticker
-        
-        return data.to_dict('records'), comp_name,ticker, f'Company Name: {comp_name}'
+        comp_name = comp_name = metadata.get('shortName') or metadata.get('displayName') or metadata.get('longName') or ticker
+        #Problem: international stocks like i.e infineon are poorly documented and or have their Stock type in the company name this 
+        #will lead to trailing letters in this case 'INFINEON TECHNOLOGIES AG      N' 
+        #So to make the company name as pretty as possible we have to find anre remove trailin letters ad numbers
+        comp_name = clean_comp_name(comp_name)
+        return data.to_dict('records'), comp_name, ticker, f'Company Name: {comp_name}', metadata
     except Exception:
-        return [], None, None, f'Invalid: {normed_stock_input} is not a valid ticker or ISIN'
+        return [], None, None, f'Invalid: {normed_stock_input} is not a valid ticker or ISIN', None
     
     
     
