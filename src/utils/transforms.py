@@ -50,3 +50,13 @@ def clean_comp_name(comp_name:str):
     comp_name = re.sub(r"\s+[A-Z0-9]$", "", comp_name)
     
     return comp_name
+
+
+def add_currency_information(x, currency):
+    '''adds the currency information to the entries of a df based on the metadata'''
+    if currency == "USD":
+        return f"${x:,.2f}"
+    elif currency == "EUR":
+        return f"{x:,.2f} €"
+    else:
+        return f"{x:,.2f} {currency}"

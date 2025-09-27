@@ -8,7 +8,7 @@ import pandas as pd
 
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
 from utils.plots import plot_stock_chart
-from utils.transforms import decode_records_data
+from utils.transforms import decode_records_data, add_currency_information
 from utils.config import flatly_colors
 
 ####
@@ -243,9 +243,11 @@ def update_stock_plot(metadata ,axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y
     Output('table_headline', 'children'),
     Output('stock_table', 'children'),
     Input('stockdata', 'data'),
-    Input('name_company', 'data'),    
+    Input('name_company', 'data'), 
+    Input('metadata', 'data'), 
+       
 )
-def update_stock_table(stock_data, comp_name):
+def update_stock_table(stock_data, comp_name, metadata):
     if not stock_data:
         return [], []
     stock_data =decode_records_data(stock_data)
@@ -255,7 +257,8 @@ def update_stock_table(stock_data, comp_name):
 
     data["Date"] = pd.to_datetime(data["Date"]).dt.strftime("%d.%m.%Y") 
     #example of llm usage for data wrangling
-    data = data.assign(**{col: data[col].map(lambda x: f"{x:.2f}") for col in ["Open", "High", "Low", "Close"]}, Volume=data["Volume"].map(lambda x: f"{x:,.0f}"))
+    data = data.assign(**{col: data[col].map(lambda x: add_currency_information(x, metadata["currency"])) for col in ["Open", "High", "Low", "Close"]},Volume=data["Volume"].map(lambda x: f"{x:,.0f}")
+)
     table = dbc.Table.from_dataframe(
              data, striped = True, bordered = False, hover = True
         )
