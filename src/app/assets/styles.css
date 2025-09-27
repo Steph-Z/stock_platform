@@ -1,11 +1,31 @@
-/* Accordion header when expanded */
-.accordion-button:not(.collapsed) {
-  background-color: #2c3e50 !important;
-  color: #ecf0f1 !important;          
-  box-shadow: none !important;         
+/* Redefine the whole accordion style cause it is not pretty in flatly; but otherwise I really like the flatly style!!! */
+/* Accordion item container */
+.accordion-item {
+  border: none !important;           
 }
 
-/* https://community.plotly.com/t/scrollable-dbc-table-with-max-height-and-sticky-header/62405/2 */
+/* Accordion header (collapsed and expanded) */
+.accordion-button,
+.accordion-button.collapsed {
+  background-color: #2c3e50 !important;
+  color: #ecf0f1 !important;
+  border-radius: 0 !important;           /* remove rounded corners */
+  box-shadow: none !important;
+}
+
+/* Accordion body */
+.accordion-body {
+  background-color: #212529 !important; 
+  color: #ecf0f1 !important;        
+}
+/* Accordion header when expanded (not collapsed) */
+.accordion-button:not(.collapsed) {
+  color: #18bc9c !important;   /* Flatly success green */
+}
+
+
+
+/*https://community.plotly.com/t/scrollable-dbc-table-with-max-height-and-sticky-header/62405/2 */
 .table-wrapper {
   overflow: hidden auto;
   position: relative;

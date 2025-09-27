@@ -8,7 +8,6 @@ import pandas as pd
 
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
 from utils.plots import plot_stock_chart
-from utils.misc import colors
 from utils.transforms import decode_records_data
 from utils.config import flatly_colors
 
