@@ -8,9 +8,9 @@ import pandas as pd
 
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
 from utils.plots import plot_stock_chart
-from utils.misc import colors
-from utils.transforms import decode_records_data
+from utils.transforms import decode_records_data, add_currency_information
 from utils.config import flatly_colors
+from tabs.table_tab import table_layout
 
 ####
 #set figures to dark figures
@@ -92,7 +92,6 @@ sidebar = html.Div(
             html.Li([html.B("Microsoft"), ": MSFT or US5949181045"]),
             html.Li([html.B("Nvidia"), ": NVDA or US67066G1040"]),
             html.Li([html.B("AMD"), ": AMD or US0079031078"]),
-            html.Li([html.B("Adidas"), ": ADS.DE or DE000A1EWWW0"]),
             html.Li([html.B("SAP"), ": SAP.DE or DE0007164600"]),
             html.Li([html.B("Infineon"), ": IFX.DE or DE0006231004"]),
             html.Li([html.B("ASML"), ": ASML or NL0010273215"])
@@ -115,40 +114,61 @@ sidebar = html.Div(
 )
 #Plot and Table definition:
 
-plot_table = html.Div(
-    [   
-        html.H4(id ='plot_headline'),
+plot_layout = html.Div(
+    [
+        html.H4(id='plot_headline'),
         dbc.Row(
-            dbc.Col(dcc.Graph(id="stocklineplot", figure=go.Figure(layout=go.Layout(template="flatly_dark"))), width=10),
-            style={"height": "65vh"}
-        ),
-        html.Hr(),
-        html.H4(id ='table_headline'),
-        html.Br(),
-        dbc.Row(
-            dbc.Col(id = 'stock_table', width=10),
-            style={"height": "30vh"}
+            dbc.Col(
+                dcc.Graph(
+                    id="stocklineplot",
+                    figure=go.Figure(layout=go.Layout(template="flatly_dark"))
+                ),
+                width=12
+            )
         )
     ],
     style={
-        "margin-left": "18rem",  
+        "margin-left": "18rem",
         "padding": "1rem"
     }
 )
 
+#####Tabs layout 
+
+tabs = dbc.Tabs(
+    [
+        dbc.Tab(label="Table", tab_id="table"),
+        dbc.Tab(label="Metrics", tab_id="metrics"),
+        dbc.Tab(label="Ask an LLM", tab_id="llm")
+    ],
+    id="tabs",
+    active_tab="table",
+    style={
+        "margin-left": "18rem",   # push it to the right of the sidebar
+        "padding": "1rem"
+    }
+)
+###########
+
+
+# Main page layout now just combines them
 layout = dbc.Container([
     dbc.Row([
         sidebar,
-        plot_table        
+        dbc.Col([
+            plot_layout,          # plot always visible
+            tabs,                 # tabs under the plot
+            html.Div(id="tab-content")  # placeholder for tab content
+        ])
     ], className="g-0")
 ], fluid=True,
- style= {"overflowX": "hidden",
-         "overflowY": "hidden"})
+ style={"overflowX": "hidden", "overflowY": "hidden"})
 
 #Callback to update the plot bassed on the selected stock and data 
 @callback(
     Output('stocklineplot', 'figure'),
     Output('plot_headline', 'children'),
+    Input('metadata', 'data'),
     Input('axis_scaling', 'value'),
     Input("btn-1m", "n_clicks"),
     Input("btn-3m", "n_clicks"),
@@ -162,7 +182,7 @@ layout = dbc.Container([
     Input('chart-type-input', 'value')
 )
 
-def update_stock_plot(axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_input_value, stock_data_records,ticker, chart_type):
+def update_stock_plot(metadata ,axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_input_value, stock_data_records,ticker, chart_type):
     #to find out which button ws used: https://dash.plotly.com/advanced-callbacks
     #ctx
     if not stock_input_value or not stock_data_records:
@@ -172,7 +192,7 @@ def update_stock_plot(axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_in
     
     
     df =decode_records_data(stock_data_records)
-    fig = plot_stock_chart(df, comp_name= stock_input_value, ticker= ticker, chart_type= chart_type)
+    fig = plot_stock_chart(df, comp_name= stock_input_value, ticker= ticker, chart_type= chart_type, metadata= metadata)
     
     #Update the figure if a button is pressed:
     triggered = ctx.triggered_id
@@ -204,44 +224,19 @@ def update_stock_plot(axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_in
                 fig.update_yaxes(range= [y_min, y_max]) 
                           
     fig.update_yaxes(type = axis_type.lower())
+    fig.update_layout(height =  600)
 
     return fig, f'Interactive plot of the {stock_input_value} stock'
 
-
-#Callback for the data in the table
 @callback(
-    Output('table_headline', 'children'),
-    Output('stock_table', 'children'),
-    Input('stockdata', 'data'),
-    Input('name_company', 'data'),    
+    Output("tab-content", "children"),
+    Input("tabs", "active_tab")
 )
-def update_stock_table(stock_data, comp_name):
-    if not stock_data:
-        return [], []
-    stock_data =decode_records_data(stock_data)
-    data = pd.DataFrame(stock_data).sort_index(ascending= False)
-    if len(data) > 50:
-        data = data.head(50)
-
-    data["Date"] = pd.to_datetime(data["Date"]).dt.strftime("%d.%m.%Y") 
-    table = dbc.Table.from_dataframe(
-             data.round(2), striped=True, bordered=True, hover=True, index=False, responsive = True
-        )
-    
-    #to make the table scrollable we can put it in another Div container with styling 
-    #the styles can be found under: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference, ITs too much for me to really go through
-    #all options, so in this case I'll see how it looks and use an LLM to find the styles i need to achieve a specific results
-    scrollable_table = html.Div(
-        table,
-        style={
-            "maxHeight": "400px",
-            "overflowY": "auto",
-            "overflowX": "auto",
-            "margin": "0 auto",
-            "width": "80%",
-            "boxShadow": "0px 4px 10px rgba(0,0,0,0.2)",
-            "borderRadius": "8px"
-        }
-    )
-
-    return f'Detailed information about {comp_name}\'s last 50 trading days',scrollable_table
+def render_tab_content(active_tab):
+    if active_tab == "table":
+        return table_layout
+    elif active_tab == 'metrics':
+        return html.Div(dcc.Markdown('Metrics coming soon',style={"margin-left": "18rem","padding": "1rem"}))
+    elif active_tab == 'llm':
+        return html.Div(dcc.Markdown('LLM Queries coming soon',style={"margin-left": "18rem","padding": "1rem"}))
+    return html.Div("No content available.")
