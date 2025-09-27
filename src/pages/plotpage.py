@@ -10,6 +10,7 @@ from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insen
 from utils.plots import plot_stock_chart
 from utils.transforms import decode_records_data, add_currency_information
 from utils.config import flatly_colors
+from tabs.table_tab import table_layout
 
 ####
 #set figures to dark figures
@@ -148,17 +149,7 @@ tabs = dbc.Tabs(
     }
 )
 ###########
-table_layout = html.Div(
-    [   html.H4(id='table_headline'),
-        html.Br(),
-        dbc.Row(
-            dbc.Col(id='stock_table', width=12))
-    ],
-    style={
-        "margin-left": "18rem",
-        "padding": "1rem"
-    }
-)
+
 
 # Main page layout now just combines them
 layout = dbc.Container([
@@ -236,43 +227,6 @@ def update_stock_plot(metadata ,axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y
     fig.update_layout(height =  600)
 
     return fig, f'Interactive plot of the {stock_input_value} stock'
-
-
-#Callback for the data in the table
-@callback(
-    Output('table_headline', 'children'),
-    Output('stock_table', 'children'),
-    Input('stockdata', 'data'),
-    Input('name_company', 'data'), 
-    Input('metadata', 'data'), 
-       
-)
-def update_stock_table(stock_data, comp_name, metadata):
-    if not stock_data:
-        return [], []
-    stock_data =decode_records_data(stock_data)
-    data = pd.DataFrame(stock_data).sort_index(ascending= False)
-    if len(data) > 50:
-        data = data.head(50)
-
-    data["Date"] = pd.to_datetime(data["Date"]).dt.strftime("%d.%m.%Y") 
-    #example of llm usage for data wrangling
-    data = data.assign(**{col: data[col].map(lambda x: add_currency_information(x, metadata["currency"])) for col in ["Open", "High", "Low", "Close"]},Volume=data["Volume"].map(lambda x: f"{x:,.0f}")
-)
-    table = dbc.Table.from_dataframe(
-             data, striped = True, bordered = False, hover = True
-        )
-    
-    #to make the table scrollable we can put it in another Div container with styling 
-    #the styles can be found under: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference, ITs too much for me to really go through
-    #all options, so in this case I'll see how it looks and use an LLM to find the styles i need to achieve a specific results
-    scrollable_table = html.Div(
-        table,
-        className= "table-wrapper"
-    )
-
-    return f'Detailed information about {comp_name}\'s last 50 trading days',scrollable_table
-
 
 @callback(
     Output("tab-content", "children"),
