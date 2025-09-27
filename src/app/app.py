@@ -107,7 +107,7 @@ stock_input = html.Div(
 page_links = dbc.Nav(
     [
         dbc.NavItem(dbc.NavLink('Home', href='/', active='exact')),
-        dbc.NavItem(dbc.NavLink('Plots/Tables', href='/charts', active='exact')),
+        dbc.NavItem(dbc.NavLink('Dashboard', href='/dashboard', active='exact')),
     ],
     pills=True,
     navbar=True,
@@ -178,7 +178,7 @@ def toggle_navbar(n, is_open):
 @app.callback(Output('page-content', 'children'), Input('url', 'pathname'))
 
 def display_page(path):
-    if path == '/charts':
+    if path == '/dashboard':
         return chart_layout
     else:
         return home_layout
