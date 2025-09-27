@@ -4,3 +4,15 @@
   color: #ecf0f1 !important;          
   box-shadow: none !important;         
 }
+
+/* https://community.plotly.com/t/scrollable-dbc-table-with-max-height-and-sticky-header/62405/2 */
+.table-wrapper {
+  overflow: hidden auto;
+  position: relative;
+  max-height: 300px;
+}
+
+.table-wrapper > table > thead {
+  position: sticky;
+  top: 0;
+}

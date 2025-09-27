@@ -254,8 +254,10 @@ def update_stock_table(stock_data, comp_name):
         data = data.head(50)
 
     data["Date"] = pd.to_datetime(data["Date"]).dt.strftime("%d.%m.%Y") 
+    #example of llm usage for data wrangling
+    data = data.assign(**{col: data[col].map(lambda x: f"{x:.2f}") for col in ["Open", "High", "Low", "Close"]}, Volume=data["Volume"].map(lambda x: f"{x:,.0f}"))
     table = dbc.Table.from_dataframe(
-             data.round(2), striped=True, bordered=True, hover=True, index=False, responsive = True
+             data, striped = True, bordered = False, hover = True
         )
     
     #to make the table scrollable we can put it in another Div container with styling 
@@ -263,15 +265,7 @@ def update_stock_table(stock_data, comp_name):
     #all options, so in this case I'll see how it looks and use an LLM to find the styles i need to achieve a specific results
     scrollable_table = html.Div(
         table,
-        style={
-            "maxHeight": "400px",
-            "overflowY": "auto",
-            "overflowX": "auto",
-            "margin": "0 auto",
-            "width": "80%",
-            "boxShadow": "0px 4px 10px rgba(0,0,0,0.2)",
-            "borderRadius": "8px"
-        }
+        className= "table-wrapper"
     )
 
     return f'Detailed information about {comp_name}\'s last 50 trading days',scrollable_table
