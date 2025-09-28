@@ -11,6 +11,7 @@ from utils.plots import plot_stock_chart
 from utils.transforms import decode_records_data, add_currency_information
 from utils.config import flatly_colors
 from tabs.table_tab import table_layout
+from tabs.llm_explainer import llm_explainer_layout
 
 ####
 #set figures to dark figures
@@ -238,5 +239,5 @@ def render_tab_content(active_tab):
     elif active_tab == 'metrics':
         return html.Div(dcc.Markdown('Metrics coming soon',style={"margin-left": "18rem","padding": "1rem"}))
     elif active_tab == 'llm':
-        return html.Div(dcc.Markdown('LLM Queries coming soon',style={"margin-left": "18rem","padding": "1rem"}))
+        return llm_explainer_layout
     return html.Div("No content available.")
