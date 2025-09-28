@@ -1,4 +1,5 @@
 from dash import html, dcc, Input, Output, callback, State, ctx
+from dash.exceptions import PreventUpdate
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
@@ -169,6 +170,7 @@ layout = dbc.Container([
 @callback(
     Output('stocklineplot', 'figure'),
     Output('plot_headline', 'children'),
+    Output('plot_range', 'data', allow_duplicate=True),
     Input('metadata', 'data'),
     Input('axis_scaling', 'value'),
     Input("btn-1m", "n_clicks"),
@@ -180,7 +182,8 @@ layout = dbc.Container([
     Input('name_company', 'data'),
     Input('stockdata', 'data'),
     Input('ticker', 'data'),
-    Input('chart-type-input', 'value')
+    Input('chart-type-input', 'value'),
+    prevent_initial_call="initial_duplicate"
 )
 
 def update_stock_plot(metadata ,axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_input_value, stock_data_records,ticker, chart_type):
@@ -223,12 +226,33 @@ def update_stock_plot(metadata ,axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y
             fig.update_xaxes(range=xaxis_range)
             if axis_type.lower() == 'linear':
                 fig.update_yaxes(range= [y_min, y_max]) 
+                
+    else:
+        start_date = df['Date'].min()
+        end_date = df['Date'].max()
                           
     fig.update_yaxes(type = axis_type.lower())
     fig.update_layout(height =  600)
+    
+    plot_range = {'earliest': start_date, 'latest': end_date}
 
-    return fig, f'Interactive plot of the {stock_input_value} stock'
+    return fig, f'Interactive plot of the {stock_input_value} stock', plot_range
 
+#To get the range of the plot if the user uses the mouse to change it 
+
+@callback(
+    Output('plot_range', 'data', allow_duplicate=True),
+    Input('stocklineplot', 'relayoutData'),    #https://dash.plotly.com/annotations/1000
+    prevent_initial_call=True
+)
+
+def update_plot_range_user_uses_mouse(relayout):
+    if not relayout or "xaxis.range[0]" not in relayout:
+        raise PreventUpdate
+    
+    return {'earliest': relayout["xaxis.range[0]"].split(" ")[0], 'latest': relayout["xaxis.range[1]"].split(" ")[0]}
+    
+    
 @callback(
     Output("tab-content", "children"),
     Input("tabs", "active_tab")

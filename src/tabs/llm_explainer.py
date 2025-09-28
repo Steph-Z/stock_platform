@@ -11,7 +11,7 @@ from utils.config import flatly_colors
 
 ####
 #initial Text
-llm_explainer_headline = "LLM Stock movement explanation"
+llm_explainer_headline = "LLM plot explanation"
 llm_explainer_text = """
 Are you unsure about why a Stock moved in a certain direction in a period of time? Do you see large changes in short periods of time you can not explain ?
 Use the tools on the bottom left and the plot above to find out why! An LLM will explain why the chosen stock moved that way in the time period chosen in the plot above.
@@ -35,7 +35,7 @@ five_years_ago = today - timedelta(days=5*365)
 sidebar_llm = dbc.Col([
             html.Div([
                 html.Div(
-                html.H4("LLM Query Setup", className="fw-bold"),
+                html.H4("Setup", className="fw-bold"),
                 style={
                     "backgroundColor": flatly_colors['primary'],
                     "color": "white",
@@ -83,7 +83,7 @@ sidebar_llm = dbc.Col([
                 html.Label("Model:"),
                 dcc.Dropdown(
                     id="llm_model_dropdown",
-                    options=[{"label": "DeepSeek", "value": "deepseek"}],
+                    options=[{"label": "DeepSeek-Dummy", "value": "deepseek"}],
                     value="deepseek",
                     clearable=False,
                     style={
@@ -118,7 +118,7 @@ sidebar_llm = dbc.Col([
 output_window =  dbc.Col([
             html.Div([
                 html.Div(
-                html.H4("LLM Output", className="fw-bold"),
+                html.H4("Answer", className="fw-bold"),
                 style={
                     "backgroundColor": flatly_colors['primary'],
                     "color": "white",
@@ -129,8 +129,9 @@ output_window =  dbc.Col([
                 ),
                 html.Hr(),
                 dbc.Spinner(
-                    dcc.Markdown("""Currently, I'm in the process of setting up the Prompt injection as well as the LLM Backend. Thank you for understanding
-                                 This Tab has no functionality at the moment while it is being set up 
+                    dcc.Markdown("""Currently, I'm in the process of setting up the prompt injection as well as the LLM backend. Thank you for understanding
+                                 This bab has no functionality at the moment.
+                                  
                                  """, id="llm_output_box"),
                     color= flatly_colors['success']
                 )
@@ -155,7 +156,6 @@ llm_explainer_layout = html.Div([
             title=html.Div([
                 html.H3(llm_explainer_headline, className='text-center')
             ], style={
-                "margin-left": "18rem",
                 "padding": "1rem"
             })
         )

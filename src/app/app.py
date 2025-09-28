@@ -1,4 +1,4 @@
-from dash import Dash, dcc, html, Input, Output, State, no_update
+from dash import Dash, dcc, html, Input, Output, State, no_update, ctx
 import dash_bootstrap_components as dbc
 import yfinance as yf
 import plotly.graph_objects as go
