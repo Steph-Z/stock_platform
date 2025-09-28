@@ -99,7 +99,8 @@ stock_input = html.Div(
                 width='auto'  
             ),
             className='mt-2' 
-        )
+        ),
+        html.Br()
     ]
 )
 
@@ -147,7 +148,8 @@ global_stores = html.Div(
     dcc.Store( id = 'name_company'), #altough in metadata, depending on where the company is from its a different name [name_long],
     #[name_short], sot this is easier to sore like that
     dcc.Store(id= 'ticker'),
-    dcc.Store(id= 'metadata')
+    dcc.Store(id= 'metadata'),
+    dcc.Store(id = 'plot_range')
     ]    
 )
 
