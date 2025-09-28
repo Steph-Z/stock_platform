@@ -42,7 +42,7 @@ https://github.com/Steph-Z/stock_platform
 
 ---
 
-Although I am german, english is the language used to write and document code most of the time. Additionally collaboration across international teams requires english as well. As a consequence, I decided to use english for this project.
+Although I am German, English is the language used to write and document code most of the time. Additionally collaboration across international teams requires English as well. As a result, I decided to use English for this project.
 
 ---
 
@@ -100,7 +100,8 @@ Add full integration tests that emulate user inputs across the dashboard.
 
 **LLM-analysis tab**  
 Answer questions about the selected stock and generate mock stock analysis.  
-This will help me learn how to build and integrate a backend for LLMs into real-world products."""
+This will help me learn how to build and integrate a backend for LLMs into real-world products.
+This feature is in developement at the moment. I chose to use the hugging face API."""
   
 #The Container for the pages content. A Row vor each Contents row and a column so I can have a multi column layout as well as center everything on the page 
 #Problem is: the NAVBAR; Since it uses a combination of different object with different paddings 
