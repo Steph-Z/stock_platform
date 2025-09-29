@@ -1,5 +1,6 @@
 #Reuse old parts to save time now:
-from dash import html, dcc, Input, Output, callback, ctx
+from dash import html, dcc, Input, Output, callback
+from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 
 
@@ -43,17 +44,20 @@ sidebar_llm = dbc.Col([
                     "marginBottom": "1rem"
                 }),
                 html.Hr(),
-
-                html.Label("Select Timeframe:"),
-                dcc.DatePickerRange(
-                    id="llm_main_daterange",
-                    min_date_allowed=five_years_ago,
-                    max_date_allowed=today,
-                    start_date=five_years_ago,
-                    display_format="DD.MM.YYYY",
-                    end_date=today,
-                    style={"margin-bottom": "1rem"}
-                ),
+                html.Div([
+                    dbc.Row([
+                    html.Label([
+                            "Select Timeframe (updates the plot):"
+                        ]),
+                    dcc.DatePickerRange(
+                        id="llm_main_daterange",
+                        min_date_allowed=five_years_ago,
+                        max_date_allowed=today,
+                        start_date=five_years_ago,
+                        display_format="DD.MM.YYYY",
+                        end_date=today,
+                        style={"margin-bottom": "1rem"}
+                    )])]),
 
                 html.Label("Focus on detail period:"),
                 dbc.RadioItems(
@@ -71,8 +75,6 @@ sidebar_llm = dbc.Col([
                 html.Div(
                     dcc.DatePickerRange(
                         id="llm_detail_daterange",
-                        min_date_allowed=five_years_ago,
-                        max_date_allowed=today,
                         display_format="DD.MM.YYYY",
                         style={"margin-top": "1rem"}
                     ),
@@ -179,3 +181,46 @@ llm_explainer_layout = html.Div([
 )
 def toggle_detail_enabled(focus_value):
     return focus_value != "yes"
+#callback to adjust the plot based on the date picker
+
+@callback(
+    Output("llm_main_daterange", "start_date"),
+    Output("llm_main_daterange", "end_date"),
+    Input("plot_range", "data"),
+    prevent_initial_call=True
+)
+def sync_store_to_datepicker(range_dict):
+    if not range_dict:
+        raise PreventUpdate
+    return range_dict["beginning"], range_dict["end"]
+
+#callback to adjust the datepicker to the range
+
+@callback(
+    Output("plot_range", "data", allow_duplicate=True),
+    Input("llm_main_daterange", "start_date"),
+    Input("llm_main_daterange", "end_date"),
+    prevent_initial_call=True
+)
+def sync_datepicker_to_store(start_date, end_date):
+    if not start_date or not end_date:
+        raise PreventUpdate
+    return {"beginning": pd.to_datetime(start_date).isoformat(),
+            "end": pd.to_datetime(end_date).isoformat()}
+    
+#Updat ethe detail picker based on the range and only allow inputs inside the region:
+@callback(
+    Output("llm_detail_daterange", "min_date_allowed"),
+    Output("llm_detail_daterange", "max_date_allowed"),
+    Output("llm_detail_daterange", "start_date"),
+    Output("llm_detail_daterange", "end_date"),
+    Input("plot_range", "data"),
+    prevent_initial_call=True
+)
+def sync_picker_with_store(range_dict):
+    if not range_dict:
+        raise PreventUpdate
+
+    start_date = pd.to_datetime(range_dict["beginning"]).date()
+    end_date   = pd.to_datetime(range_dict["end"]).date()
+    return start_date, end_date, start_date, end_date
