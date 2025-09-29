@@ -157,7 +157,6 @@ llm_explainer_layout = html.Div([
             title=html.Div([
                 html.H3(llm_explainer_headline, className='text-center')
             ], style={
-                "margin-left": "18rem",
                 "padding": "1rem"
             })
         )
