@@ -1,4 +1,5 @@
-from dash import Dash, dcc, html, Input, Output, State, no_update
+from dash import Dash, dcc, html, Input, Output, State
+
 import dash_bootstrap_components as dbc
 import yfinance as yf
 import plotly.graph_objects as go
@@ -149,7 +150,8 @@ global_stores = html.Div(
     #[name_short], sot this is easier to sore like that
     dcc.Store(id= 'ticker'),
     dcc.Store(id= 'metadata'),
-    dcc.Store(id = 'plot_range')
+    dcc.Store(id = 'plot_range', data= {"beginning": (pd.Timestamp.today() - pd.DateOffset(years=5)).isoformat(),
+        "end": pd.Timestamp.today().isoformat()})
     ]    
 )
 
