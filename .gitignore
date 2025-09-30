@@ -95,3 +95,7 @@ cython_debug/
 .ruff_cache/
 
 notebooks/
+
+#api key
+.env
+

@@ -1,5 +1,6 @@
 #Reuse old parts to save time now:
-from dash import html, dcc, Input, Output, callback, ctx
+from dash import html, dcc, Input, Output, callback, State
+from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 
 
@@ -8,6 +9,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 
 from utils.config import flatly_colors
+from utils.transforms import decode_records_data, prepare_data_for_llm
 
 ####
 #initial Text
@@ -43,17 +45,20 @@ sidebar_llm = dbc.Col([
                     "marginBottom": "1rem"
                 }),
                 html.Hr(),
-
-                html.Label("Select Timeframe:"),
-                dcc.DatePickerRange(
-                    id="llm_main_daterange",
-                    min_date_allowed=five_years_ago,
-                    max_date_allowed=today,
-                    start_date=five_years_ago,
-                    display_format="DD.MM.YYYY",
-                    end_date=today,
-                    style={"margin-bottom": "1rem"}
-                ),
+                html.Div([
+                    dbc.Row([
+                    html.Label([
+                            "Select Timeframe (updates the plot, Max 3 months for LLM explanation):"
+                        ]),
+                    dcc.DatePickerRange(
+                        id="llm_main_daterange",
+                        min_date_allowed=five_years_ago,
+                        max_date_allowed=today,
+                        start_date=five_years_ago,
+                        display_format="DD.MM.YYYY",
+                        end_date=today,
+                        style={"margin-bottom": "1rem"}
+                    )])]),
 
                 html.Label("Focus on detail period:"),
                 dbc.RadioItems(
@@ -71,8 +76,6 @@ sidebar_llm = dbc.Col([
                 html.Div(
                     dcc.DatePickerRange(
                         id="llm_detail_daterange",
-                        min_date_allowed=five_years_ago,
-                        max_date_allowed=today,
                         display_format="DD.MM.YYYY",
                         style={"margin-top": "1rem"}
                     ),
@@ -129,8 +132,8 @@ output_window =  dbc.Col([
                 ),
                 html.Hr(),
                 dbc.Spinner(
-                    dcc.Markdown("""Currently, I'm in the process of setting up the Prompt injection as well as the LLM Backend. Thank you for understanding
-                                 This Tab has no functionality at the moment while it is being set up 
+                    dcc.Markdown("""Currently, I'm in the process of setting up the Prompt injection as well as the LLM Backend.  You can try out the Prompt injection
+                                 already, it is a work in progress. The backend is nearly done as well. Im exited to continue working on this
                                  """, id="llm_output_box"),
                     color= flatly_colors['success']
                 )
@@ -147,6 +150,7 @@ output_window =  dbc.Col([
 
 
 llm_explainer_layout = html.Div([
+    
     dbc.Accordion([
         dbc.AccordionItem(
             [
@@ -155,13 +159,14 @@ llm_explainer_layout = html.Div([
             title=html.Div([
                 html.H3(llm_explainer_headline, className='text-center')
             ], style={
-                "margin-left": "18rem",
                 "padding": "1rem"
             })
         )
     ]),
+    html.Div(id="llm_validation_check"), #to throw altert if the input is too long
     dbc.Row([sidebar_llm,
-    output_window])
+    output_window    
+    ])
     
     
     
@@ -179,3 +184,88 @@ llm_explainer_layout = html.Div([
 )
 def toggle_detail_enabled(focus_value):
     return focus_value != "yes"
+#callback to adjust the plot based on the date picker
+
+@callback(
+    Output("llm_main_daterange", "start_date"),
+    Output("llm_main_daterange", "end_date"),
+    Input("plot_range", "data"),
+    prevent_initial_call=True
+)
+def sync_store_to_datepicker(range_dict):
+    if not range_dict:
+        raise PreventUpdate
+    return range_dict["beginning"], range_dict["end"]
+
+#callback to adjust the datepicker to the range
+
+@callback(
+    Output("plot_range", "data", allow_duplicate=True),
+    Input("llm_main_daterange", "start_date"),
+    Input("llm_main_daterange", "end_date"),
+    prevent_initial_call=True
+)
+def sync_datepicker_to_store(start_date, end_date):
+    if not start_date or not end_date:
+        raise PreventUpdate
+    return {"beginning": pd.to_datetime(start_date).isoformat(),
+            "end": pd.to_datetime(end_date).isoformat()}
+    
+#Updat ethe detail picker based on the range and only allow inputs inside the region:
+@callback(
+    Output("llm_detail_daterange", "min_date_allowed"),
+    Output("llm_detail_daterange", "max_date_allowed"),
+    Output("llm_detail_daterange", "start_date"),
+    Output("llm_detail_daterange", "end_date"),
+    Input("plot_range", "data"),
+    prevent_initial_call=True
+)
+def sync_picker_with_store(range_dict):
+    if not range_dict:
+        raise PreventUpdate
+
+    start_date = pd.to_datetime(range_dict["beginning"]).date()
+    end_date   = pd.to_datetime(range_dict["end"]).date()
+    return start_date, end_date, start_date, end_date
+
+#callback to design the prompt
+
+@callback(
+    Output("llm_output_box", "children"),  # placeholder, later this needs to be the llm input, but this way we can see it 
+    Output("llm_validation_check", "children"),
+    Input("llm_explain_btn", "n_clicks"),
+    State("plot_range", "data"),
+    State("stockdata", "data"),
+    State("name_company", "data"),
+    State("llm_focus_detail", "value"),
+    State("llm_detail_daterange", "start_date"),
+    State("llm_detail_daterange", "end_date"),
+    State("llm_custom_question", "value"),
+    State("llm_model_dropdown", "value"),
+    prevent_initial_call=True
+)
+def prompt_injection(button_fire, plot_range, data, comp_name, focus_bool, focus_range_start, focus_range_end, extra_questions, model_type):
+    '''the prompt injection using the dynamic/changing  variables to design the prompt for the llm analysis'''
+    
+    start_date = pd.to_datetime(plot_range['beginning'])
+    end_date = pd.to_datetime(plot_range['end'])
+    #check if range is not larger than 3 months:
+    #this is to avoid long input tokens
+    if (end_date- start_date).days > 100: #generous impl :) 
+        return None, dbc.Alert("Please select a maximum range of 3 months for analysis.",color="danger",
+            dismissable=True,
+            is_open=True
+        )
+    df =decode_records_data(data)
+    df = df.loc[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
+
+    df = prepare_data_for_llm(df)
+
+    prompt = f'''Your role is a stock analyst for a financial dashboard.
+    The user of the dashboard wants to know why the stock of a company moved the way it did.
+    You provide a short, about 200 words long analysis not matter what the users states.
+    Your output will be rendered in a Markdown menu, so use markdown formatting for a short but coherent analysis.
+    The name of the Company is {comp_name}. Focus on the time period present in the data and explain why the stock moved the way it did.
+    The data shows the days and how much (in %) the stock moved. {df}
+    '''
+    return prompt, "Question submitted to LLM"

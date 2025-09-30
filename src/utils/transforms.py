@@ -60,3 +60,16 @@ def add_currency_information(x, currency):
         return f"{x:,.2f} €"
     else:
         return f"{x:,.2f} {currency}"
+    
+def prepare_data_for_llm(data):
+    '''takes the standard data, decoded and returns the llm output'''
+    
+    data_change = pd.DataFrame(data['Close'].values, 
+                               index=data['Date'], 
+                               columns=['Close'])
+    data_change['Change from prev_day in %'] = data_change['Close'].pct_change() * 100
+    data_change.drop('Close',axis = 1, inplace= True)
+    data_change.dropna(inplace= True)
+    data_change = data_change.round(1)
+    
+    return data_change.to_csv(index= True, header= False).strip()

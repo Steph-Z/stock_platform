@@ -84,10 +84,10 @@ software_text = """
 """
 
 what_you_can_do = """
-#### Plots/Tables Section:  
+#### Dashboard Section:  
 You can explore different stocks by entering their Ticker or ISIN.  
 The dashboard displays a chart of the last 5 years and a table showing recent trading data.  
-Feel free to test it out directly in the Plots/Charts tab.
+Feel free to test it out directly in the Dashboard tab.
 
 ---
 
@@ -95,13 +95,14 @@ Feel free to test it out directly in the Plots/Charts tab.
 I’m actively working on expanding the dashboard’s functionality.  
 Here are the next major improvements I plan to implement:
 
-**Enhanced testing**  
-Add full integration tests that emulate user inputs across the dashboard.
-
 **LLM-analysis tab**  
 Answer questions about the selected stock and generate mock stock analysis.  
 This will help me learn how to build and integrate a backend for LLMs into real-world products.
-This feature is in developement at the moment. I chose to use the hugging face API."""
+This feature is in development at the moment. I will use the hugging face API.
+
+**Enhanced testing**  
+Add full integration tests that emulate user inputs across the dashboard.
+"""
   
 #The Container for the pages content. A Row vor each Contents row and a column so I can have a multi column layout as well as center everything on the page 
 #Problem is: the NAVBAR; Since it uses a combination of different object with different paddings 

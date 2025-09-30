@@ -1,10 +1,12 @@
 from dash import html, dcc, Input, Output, callback, State, ctx
+from dash.exceptions import PreventUpdate
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
 
 import dash_bootstrap_components as dbc
 import pandas as pd
+import datetime as dt
 
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
 from utils.plots import plot_stock_chart
@@ -171,63 +173,120 @@ layout = dbc.Container([
     Output('plot_headline', 'children'),
     Input('metadata', 'data'),
     Input('axis_scaling', 'value'),
+    Input('name_company', 'data'),
+    Input('stockdata', 'data'),
+    Input('ticker', 'data'),
+    Input('chart-type-input', 'value'),
+    Input('plot_range', 'data'),
+    State('stocklineplot', 'figure')
+)
+
+def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,ticker, chart_type, range_dict, figure_old):
+    #set date for the figure
+
+    start_date = pd.to_datetime(range_dict['beginning'])
+    end_date = pd.to_datetime(range_dict['end'])
+    
+    # If the figure already has this exact range, skip update
+    if figure_old:
+        old_range = figure_old.get("layout", {}).get("xaxis", {}).get("range")
+        if old_range:
+            old_start, old_end = map(pd.to_datetime, old_range)
+            if old_start == start_date and old_end == end_date:
+                raise PreventUpdate
+            
+    #empty plot if important dat ais missing
+    if not stock_input_value or not stock_data_records:        
+        empty_fig = go.Figure()
+        empty_fig.update_xaxes(range= [start_date, end_date])
+        
+        return empty_fig, f'Interactive plot of the {stock_input_value} stock'
+    
+    #if we have data decode it and build the figure
+    df =decode_records_data(stock_data_records)
+    fig = plot_stock_chart(df, comp_name= stock_input_value, ticker= ticker, chart_type= chart_type, metadata= metadata)
+    
+    
+    xaxis_range = [start_date,end_date]
+               
+    fig.update_xaxes(range=xaxis_range)
+                          
+    fig.update_yaxes(type = axis_type.lower())
+    fig.update_layout(height =  600)
+
+    return fig, f'Interactive plot of the {stock_input_value} stock'
+
+
+#callback for the button presses
+@callback(
+    Output('plot_range', 'data',allow_duplicate=True),
     Input("btn-1m", "n_clicks"),
     Input("btn-3m", "n_clicks"),
     Input("btn-6m", "n_clicks"),
     Input("btn-1y", "n_clicks"),
     Input("btn-3y", "n_clicks"),
     Input("btn-5y", "n_clicks"),
-    Input('name_company', 'data'),
-    Input('stockdata', 'data'),
-    Input('ticker', 'data'),
-    Input('chart-type-input', 'value')
+    prevent_initial_call=True
 )
-
-def update_stock_plot(metadata ,axis_type, btn1, btn3, btn6, btn1y, btn3y, btn5y, stock_input_value, stock_data_records,ticker, chart_type):
+def update_plot_range_on_button_press(btn1, btn3, btn6, btn1y, btn3y, btn5y):
+    
     #to find out which button ws used: https://dash.plotly.com/advanced-callbacks
     #ctx
-    if not stock_input_value or not stock_data_records:
-        
-        empty_fig = go.Figure()
-        return empty_fig, f'Interactive plot of the {stock_input_value} stock'
-    
-    
-    df =decode_records_data(stock_data_records)
-    fig = plot_stock_chart(df, comp_name= stock_input_value, ticker= ticker, chart_type= chart_type, metadata= metadata)
-    
     #Update the figure if a button is pressed:
     triggered = ctx.triggered_id
-    if triggered:
-        end_date = df["Date"].max()
-        if triggered == "btn-1m":
-            start_date = end_date - pd.DateOffset(months=1)
-        elif triggered == "btn-3m":
-            start_date = end_date - pd.DateOffset(months=3)
-        elif triggered == "btn-6m":
-            start_date = end_date - pd.DateOffset(months=6)
-        elif triggered == "btn-1y":
-            start_date = end_date - pd.DateOffset(years=1)
-        elif triggered == "btn-3y":
-            start_date = end_date - pd.DateOffset(years=3)
-        elif triggered == "btn-5y":
-            start_date = end_date - pd.DateOffset(years=5)
-        else:
-            start_date = None
+    if not triggered:  # nothing pressed
+        raise PreventUpdate
+    
+    end_date = dt.date.today()
+    
+    if triggered == "btn-1m" and btn1: #This was a big problem: I wanted to store the start and end of the plot, but it was always overwritten by "1 month", 
+        #This is because in a dash app, all inputs, even if one spefifies prevent inital call are fired. But the n_clicks changes from None to 0 in that case so the 
+        #Initial call has btn value None and not 0. so we need to check both for the button press... ONLY because of the initilization behavior.
+        start_date = end_date - pd.DateOffset(months=1)
+    elif triggered == "btn-3m" and btn3:
+        start_date = end_date - pd.DateOffset(months=3)
+    elif triggered == "btn-6m" and btn6:
+        start_date = end_date - pd.DateOffset(months=6)
+    elif triggered == "btn-1y" and btn1y:
+        start_date = end_date - pd.DateOffset(years=1)
+    elif triggered == "btn-3y" and btn3y:
+        start_date = end_date - pd.DateOffset(years=3)
+    elif triggered == "btn-5y" and btn5y:
+        start_date = end_date - pd.DateOffset(years=5)
+    else:
+        #unlikely to encounter, sine it is called by a button press
+        start_date = end_date - pd.DateOffset(years=5)
+    range_dict = {'beginning': start_date.isoformat(), 'end': end_date.isoformat() }
 
-        if start_date is not None:
-            xaxis_range = [start_date, end_date]
-            #automatically scale Y
-            y_min = df.loc[df['Date'].between(start_date, end_date), 'Close'].min()*0.9
-            y_max = df.loc[df['Date'].between(start_date, end_date), 'Close'].max()*1.1
-            
-            fig.update_xaxes(range=xaxis_range)
-            if axis_type.lower() == 'linear':
-                fig.update_yaxes(range= [y_min, y_max]) 
-                          
-    fig.update_yaxes(type = axis_type.lower())
-    fig.update_layout(height =  600)
 
-    return fig, f'Interactive plot of the {stock_input_value} stock'
+    return range_dict
+
+
+@callback(
+    Output("plot_range", "data", allow_duplicate=True),
+    Input("stocklineplot", "relayoutData"),
+    prevent_initial_call=True
+)
+def update_plot_range_on_mouse(relayout):
+
+    if not relayout:
+        raise PreventUpdate
+
+    # relayoutData contains keys like "xaxis.range[0]" and "xaxis.range[1]"
+    if "xaxis.range[0]" in relayout and "xaxis.range[1]" in relayout:
+        start_date = pd.to_datetime(relayout["xaxis.range[0]"])
+        end_date = pd.to_datetime(relayout["xaxis.range[1]"])
+        return {"beginning": start_date.isoformat(), "end": end_date.isoformat()}
+    
+    if "xaxis.autorange" in relayout and relayout["xaxis.autorange"]:
+
+        end_date = pd.Timestamp.today().normalize()
+        start_date = end_date - pd.DateOffset(years=5)
+        return {"beginning": start_date.isoformat(), "end": end_date.isoformat()}
+
+
+    #if x axis is not changed 
+    raise PreventUpdate
 
 @callback(
     Output("tab-content", "children"),
