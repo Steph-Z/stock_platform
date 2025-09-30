@@ -132,8 +132,8 @@ output_window =  dbc.Col([
                 ),
                 html.Hr(),
                 dbc.Spinner(
-                    dcc.Markdown("""Currently, I'm in the process of setting up the Prompt injection as well as the LLM Backend. Thank you for understanding
-                                 This Tab has no functionality at the moment while it is being set up 
+                    dcc.Markdown("""Currently, I'm in the process of setting up the Prompt injection as well as the LLM Backend.  You can try out the Prompt injection
+                                 already, it is a work in progress. The backend is nearly done as well. Im exited to continue working on this
                                  """, id="llm_output_box"),
                     color= flatly_colors['success']
                 )
