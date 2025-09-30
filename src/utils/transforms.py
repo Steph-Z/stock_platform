@@ -61,7 +61,7 @@ def add_currency_information(x, currency):
     else:
         return f"{x:,.2f} {currency}"
     
-def daily_stock_change(data):
+def prepare_data_for_llm(data):
     '''takes the standard data, decoded and returns the llm output'''
     
     data_change = pd.DataFrame(data['Close'].values, 

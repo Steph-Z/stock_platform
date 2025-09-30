@@ -183,7 +183,7 @@ layout = dbc.Container([
 
 def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,ticker, chart_type, range_dict, figure_old):
     #set date for the figure
-    print(range_dict)
+
     start_date = pd.to_datetime(range_dict['beginning'])
     end_date = pd.to_datetime(range_dict['end'])
     
