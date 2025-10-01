@@ -5,3 +5,4 @@
 #After updating the requirements file i need to copy these into the main one 
 pipreqs ==0.4.13
 gunicorn==23.0.0
+requests

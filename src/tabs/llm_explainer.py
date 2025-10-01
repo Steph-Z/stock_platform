@@ -1,5 +1,5 @@
 #Reuse old parts to save time now:
-from dash import html, dcc, Input, Output, callback, State
+from dash import html, dcc, Input, Output, callback, State, no_update
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 
@@ -10,6 +10,7 @@ import pandas as pd
 
 from utils.config import flatly_colors
 from utils.transforms import decode_records_data, prepare_data_for_llm
+from utils.llm_client import query_deepseek
 
 ####
 #initial Text
@@ -164,6 +165,7 @@ llm_explainer_layout = html.Div([
         )
     ]),
     html.Div(id="llm_validation_check"), #to throw altert if the input is too long
+    html.Div(id = 'generated_prompt', hidden= True), #the prompt that was generated
     dbc.Row([sidebar_llm,
     output_window    
     ])
@@ -231,7 +233,7 @@ def sync_picker_with_store(range_dict):
 #callback to design the prompt
 
 @callback(
-    Output("llm_output_box", "children"),  # placeholder, later this needs to be the llm input, but this way we can see it 
+    Output("generated_prompt", "children"),  
     Output("llm_validation_check", "children"),
     Input("llm_explain_btn", "n_clicks"),
     State("plot_range", "data"),
@@ -244,7 +246,7 @@ def sync_picker_with_store(range_dict):
     State("llm_model_dropdown", "value"),
     prevent_initial_call=True
 )
-def prompt_injection(button_fire, plot_range, data, comp_name, focus_bool, focus_range_start, focus_range_end, extra_questions, model_type):
+def prompt_injection(button_fire, plot_range, data, comp_name, focus_setting, focus_range_start, focus_range_end, extra_questions, model_type):
     '''the prompt injection using the dynamic/changing  variables to design the prompt for the llm analysis'''
     
     start_date = pd.to_datetime(plot_range['beginning'])
@@ -260,6 +262,19 @@ def prompt_injection(button_fire, plot_range, data, comp_name, focus_bool, focus
     df = df.loc[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
 
     df = prepare_data_for_llm(df)
+    
+    if focus_setting == 'yes':
+        focus_string = f'The user also wants you to pay special attention to this interval {focus_range_start}, {focus_range_end}'
+    else:
+        focus_string = ''
+    
+
+    if extra_questions != None or extra_questions != '' or extra_questions != "You have additional questions? Feel free to ask...":
+        extra_tasks = f"The user also has additional questions which you should answer only if they are related to the stock input. Here is the user's input: {extra_questions}"
+    
+    else:
+        extra_tasks = ''
+        
 
     prompt = f'''Your role is a stock analyst for a financial dashboard.
     The user of the dashboard wants to know why the stock of a company moved the way it did.
@@ -267,5 +282,6 @@ def prompt_injection(button_fire, plot_range, data, comp_name, focus_bool, focus
     Your output will be rendered in a Markdown menu, so use markdown formatting for a short but coherent analysis.
     The name of the Company is {comp_name}. Focus on the time period present in the data and explain why the stock moved the way it did.
     The data shows the days and how much (in %) the stock moved. {df}
+    {focus_string}, {extra_tasks}    
     '''
     return prompt, "Question submitted to LLM"
