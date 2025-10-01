@@ -165,7 +165,7 @@ llm_explainer_layout = html.Div([
         )
     ]),
     html.Div(id="llm_validation_check"), #to throw altert if the input is too long
-    html.Div(id = 'generated_prompt', hidden= True), #the prompt that was generated
+    #html.Div(id = 'generated_prompt', hidden= True), #the prompt that was generated
     dbc.Row([sidebar_llm,
     output_window    
     ])
@@ -233,7 +233,8 @@ def sync_picker_with_store(range_dict):
 #callback to design the prompt
 
 @callback(
-    Output("generated_prompt", "children"),  
+    #Output("generated_prompt", "children"),  Uncommend to store it in the format for later, for testing use the output box
+    Output("llm_output_box", "children"),
     Output("llm_validation_check", "children"),
     Input("llm_explain_btn", "n_clicks"),
     State("plot_range", "data"),
