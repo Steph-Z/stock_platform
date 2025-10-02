@@ -89,6 +89,7 @@ You can explore different stocks by entering their Ticker or ISIN.
 The dashboard displays a chart of the last 5 years and a table showing recent trading data.  
 
 **LLM Analysis**
+
 The LLM Tab is connected to the HuggingFace API. Throuh a prompt injection, RAG-inspired, pipeline an LLM is queried qith a standardizes prompt to explain 
 the stocks price movement for the selected period. For that the llm has acess to the relevant data. 
 To control the cost of this feature only a three month period can be used, also the additional questions input has a limited input size. 
