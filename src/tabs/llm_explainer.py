@@ -7,10 +7,10 @@ import dash_bootstrap_components as dbc
 from datetime import date, timedelta
 import dash_bootstrap_components as dbc
 import pandas as pd
-
+import json
 from utils.config import flatly_colors
 from utils.transforms import decode_records_data, prepare_data_for_llm
-from utils.llm_client import query_deepseek
+from utils.llm_client import run_deepseek
 
 ####
 #initial Text
@@ -55,9 +55,9 @@ sidebar_llm = dbc.Col([
                         id="llm_main_daterange",
                         min_date_allowed=five_years_ago,
                         max_date_allowed=today,
-                        start_date=five_years_ago,
+                        start_date= None,
                         display_format="DD.MM.YYYY",
-                        end_date=today,
+                        end_date= None,
                         style={"margin-bottom": "1rem"}
                     )])]),
 
@@ -87,7 +87,7 @@ sidebar_llm = dbc.Col([
                 html.Label("Model:"),
                 dcc.Dropdown(
                     id="llm_model_dropdown",
-                    options=[{"label": "DeepSeek", "value": "deepseek"}],
+                    options=[{"label": "DeepSeek-V3.2", "value": "deepseek"}],
                     value="deepseek",
                     clearable=False,
                     style={
@@ -98,11 +98,12 @@ sidebar_llm = dbc.Col([
                     }
                 ),
 
-                html.Label("Additional questions:"),
+                html.Label("Additional questions (max 250 characters):"),
                 dcc.Textarea(
                     id="llm_custom_question",
                     placeholder="You have additional questions? Feel free to ask...",
                     disabled=False,
+                    maxLength = 250,
                     style={"width": "100%", "margin-bottom": "1rem", "height": "7rem"}
                 ),
 
@@ -133,8 +134,9 @@ output_window =  dbc.Col([
                 ),
                 html.Hr(),
                 dbc.Spinner(
-                    dcc.Markdown("""Currently, I'm in the process of setting up the Prompt injection as well as the LLM Backend.  You can try out the Prompt injection
-                                 already, it is a work in progress. The backend is nearly done as well. Im exited to continue working on this
+                    dcc.Markdown("""**Feel free to ask your questions!**
+                                 Please keep in mind that hosting an endpoint to an LLM can come with considerable cost. Although I implemented safety measures against high costs. 
+                                 This is not a tool to get real financial advise. If you are interested in technical details, I have a thourough explanation (upcoming) in the Home tab. 
                                  """, id="llm_output_box"),
                     color= flatly_colors['success']
                 )
@@ -165,7 +167,6 @@ llm_explainer_layout = html.Div([
         )
     ]),
     html.Div(id="llm_validation_check"), #to throw altert if the input is too long
-    #html.Div(id = 'generated_prompt', hidden= True), #the prompt that was generated
     dbc.Row([sidebar_llm,
     output_window    
     ])
@@ -233,8 +234,7 @@ def sync_picker_with_store(range_dict):
 #callback to design the prompt
 
 @callback(
-    #Output("generated_prompt", "children"),  Uncommend to store it in the format for later, for testing use the output box
-    Output("llm_output_box", "children"),
+    Output("llm_prompt", "data"),
     Output("llm_validation_check", "children"),
     Input("llm_explain_btn", "n_clicks"),
     State("plot_range", "data"),
@@ -249,7 +249,8 @@ def sync_picker_with_store(range_dict):
 )
 def prompt_injection(button_fire, plot_range, data, comp_name, focus_setting, focus_range_start, focus_range_end, extra_questions, model_type):
     '''the prompt injection using the dynamic/changing  variables to design the prompt for the llm analysis'''
-    
+    if not button_fire:  #stops the inital call, as n_clicks is  None is first call/inital one 
+        raise PreventUpdate
     start_date = pd.to_datetime(plot_range['beginning'])
     end_date = pd.to_datetime(plot_range['end'])
     #check if range is not larger than 3 months:
@@ -269,20 +270,37 @@ def prompt_injection(button_fire, plot_range, data, comp_name, focus_setting, fo
     else:
         focus_string = ''
     
-
-    if extra_questions != None or extra_questions != '' or extra_questions != "You have additional questions? Feel free to ask...":
-        extra_tasks = f"The user also has additional questions which you should answer only if they are related to the stock input. Here is the user's input: {extra_questions}"
-    
+    #catch an empty box, do in two steps to evaluate, for robust prompt building 
+    try:
+        if extra_questions.strip() == '':
+            extra_questions = None
+    except Exception:
+        pass
+    if extra_questions != None:
+        extra_tasks = f"The user also has additional questions which you should answer only if they are related to the stock input. Here is the user's input: {json.dumps(extra_questions)}"
     else:
         extra_tasks = ''
+        
         
 
     prompt = f'''Your role is a stock analyst for a financial dashboard.
     The user of the dashboard wants to know why the stock of a company moved the way it did.
     You provide a short, about 200 words long analysis not matter what the users states.
     Your output will be rendered in a Markdown menu, so use markdown formatting for a short but coherent analysis.
+    Start the output with ### Analysis of {comp_name}.
     The name of the Company is {comp_name}. Focus on the time period present in the data and explain why the stock moved the way it did.
     The data shows the days and how much (in %) the stock moved. {df}
     {focus_string}, {extra_tasks}    
     '''
-    return prompt, "Question submitted to LLM"
+    return prompt, None
+
+
+@callback(
+    Output("llm_output_box", "children"),
+    Input("llm_prompt", "data"),
+    prevent_initial_call=True
+)
+def call_llm(prompt):
+    #output = '### Analysis of Tesla'
+    output = run_deepseek(prompt, max_tokens = 500)
+    return output

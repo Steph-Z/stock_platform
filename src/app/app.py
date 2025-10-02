@@ -151,7 +151,8 @@ global_stores = html.Div(
     dcc.Store(id= 'ticker'),
     dcc.Store(id= 'metadata'),
     dcc.Store(id = 'plot_range', data= {"beginning": (pd.Timestamp.today() - pd.DateOffset(years=5)).isoformat(),
-        "end": pd.Timestamp.today().isoformat()})
+        "end": pd.Timestamp.today().isoformat()}),
+    dcc.Store(id= 'llm_prompt')
     ]    
 )
 

@@ -1,37 +1,39 @@
 import os
 import requests
+from huggingface_hub import InferenceClient
 
-HF_API_KEY = os.getenv("HF_API_KEY")
-DEEPSEEK_MODEL = "deepseek-ai/DeepSeek-V3"
-API_URL = f"https://api-inference.huggingface.co/models/{DEEPSEEK_MODEL}"
-HEADERS = {"Authorization": f"Bearer {HF_API_KEY}"}
 
-def query_deepseek(prompt: str, max_new_tokens: int = 200) -> str:
-    if not prompt:
-        return "No prompt provided."
+def run_deepseek(prompt: str, max_tokens: int = 500):
+    """
+    Query DeepSeek-V3.2-Exp via Hugging Face Inference API
+    Returns model output
+    """
+    if prompt is None:
+        return "No valid prompt detected, try changing the timeframe to a maximum of three months."
+    if not isinstance(prompt, str):
+        raise TypeError(f"Prompt must be a string")
+    if prompt.strip() == "":
+        raise ValueError("Prompt is empty")
 
-    payload = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens": max_new_tokens,
-            "return_full_text": False
-        }
-    }
+    api_key = os.environ.get("HF_API_KEY")
 
-    try:
-        response = requests.post(API_URL, headers=HEADERS, json=payload, timeout=30)
-        response.raise_for_status()
-        data = response.json()
+    try: #use exception i case provider has issues/problems
+        
+        client = InferenceClient(
+            provider="novita",
+            api_key=api_key,
+        )
+        completion = client.chat.completions.create(
+            model="deepseek-ai/DeepSeek-V3.2-Exp",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=max_tokens,
+        )
+        response_text = completion.choices[0].message["content"]
 
-        if isinstance(data, list) and "generated_text" in data[0]:
-            return data[0]["generated_text"].strip()
-        elif isinstance(data, dict) and "generated_text" in data:
-            return data["generated_text"].strip()
-        elif isinstance(data, str):
-            return data.strip()
-        else:
-            return "Unexpected response format."
-    except requests.exceptions.Timeout:
-        return "Request timed out."
-    except requests.exceptions.RequestException as e:
-        return f"Request failed: {e}"
+        
+        return response_text
+
+    except requests.exceptions.HTTPError as e:
+        raise RuntimeError(f"Problems calling the provider")
+    except Exception as e:
+        raise RuntimeError(f"UProblems getting an output from the provider")

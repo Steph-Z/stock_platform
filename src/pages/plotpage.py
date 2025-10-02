@@ -190,9 +190,11 @@ def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,
     # If the figure already has this exact range, skip update
     if figure_old:
         old_range = figure_old.get("layout", {}).get("xaxis", {}).get("range")
+        old_chart_type = figure_old.get("layout", {}).get("meta", {}).get("chart_type")
+
         if old_range:
             old_start, old_end = map(pd.to_datetime, old_range)
-            if old_start == start_date and old_end == end_date:
+            if old_start == start_date and old_end == end_date and old_chart_type == chart_type:
                 raise PreventUpdate
             
     #empty plot if important dat ais missing
@@ -212,7 +214,7 @@ def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,
     fig.update_xaxes(range=xaxis_range)
                           
     fig.update_yaxes(type = axis_type.lower())
-    fig.update_layout(height =  600)
+    #fig.update_layout(height =  600)
 
     return fig, f'Interactive plot of the {stock_input_value} stock'
 
