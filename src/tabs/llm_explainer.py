@@ -136,7 +136,7 @@ output_window =  dbc.Col([
                 dbc.Spinner(
                     dcc.Markdown("""**Feel free to ask your questions!**
                                  Please keep in mind that hosting an endpoint to an LLM can come with considerable cost. Although I implemented safety measures against high costs. 
-                                 This is not a tool to get real financial advise. If you are interested in technical details, I have a thourough explanation (upcoming) in the Home tab. 
+                                 This is not a tool to get real financial advise. If you are interested in technical details, I have a thorough explanation (upcoming) in the Home tab. 
                                  """, id="llm_output_box"),
                     color= flatly_colors['success']
                 )
