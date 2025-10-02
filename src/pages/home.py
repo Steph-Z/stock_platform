@@ -87,7 +87,15 @@ what_you_can_do = """
 #### Dashboard Section:  
 You can explore different stocks by entering their Ticker or ISIN.  
 The dashboard displays a chart of the last 5 years and a table showing recent trading data.  
-Feel free to test it out directly in the Dashboard tab.
+
+**LLM Analysis**
+
+The LLM Tab is connected to the HuggingFace API. Throuh a prompt injection, RAG-inspired, pipeline an LLM is queried qith a standardizes prompt to explain 
+the stocks price movement for the selected period. For that the llm has acess to the relevant data. 
+To control the cost of this feature only a three month period can be used, also the additional questions input has a limited input size. 
+In addition, the number of output tokens is capped.
+
+**Feel free to test everything in the Dashboard tab**
 
 ---
 
@@ -95,13 +103,15 @@ Feel free to test it out directly in the Dashboard tab.
 I’m actively working on expanding the dashboard’s functionality.  
 Here are the next major improvements I plan to implement:
 
-**LLM-analysis tab**  
-Answer questions about the selected stock and generate mock stock analysis.  
-This will help me learn how to build and integrate a backend for LLMs into real-world products.
-This feature is in development at the moment. I will use the hugging face API.
-
 **Enhanced testing**  
 Add full integration tests that emulate user inputs across the dashboard.
+
+**Metrics**
+Add a comprehensive table with metrics like volatility etc. in the tab. 
+Add custom timeframes for the metrics next to the standard
+
+**Plot**
+Add moving average dropdown menu to add a moving average line to the plot; 200 days
 """
   
 #The Container for the pages content. A Row vor each Contents row and a column so I can have a multi column layout as well as center everything on the page 
