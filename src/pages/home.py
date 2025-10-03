@@ -7,7 +7,7 @@ explain_text_german = """
 ### Hallo liebe Besucher:innen! 
 
 Mein Name ist Stephan und ich habe vor kurzem meinen Master in Data Science abgeschlossen.
-Diese Seite/ Dasboard ist ein "passion project" um noch mehr über saubere Software und AI Engineering praktiken zu lernen.
+Diese Seite/Dashboard ist ein "passion project" um noch mehr über saubere Software und AI Engineering praktiken zu lernen.
 Nutzt gern die Menüs unter diesem Text um zu sehen welche Techniken ich dabei umsetze und was man auf dieser Seite machen kann. Der gesamte Code des Projekts kann öffentlich auf meinem GitHub eingesehen werden (inkl. Tests):
 
 https://github.com/Steph-Z/stock_platform 
@@ -18,7 +18,7 @@ https://github.com/Steph-Z/stock_platform
 
 ---
 
-Da es in diesem Bereich Englisch die Sprache ist, die am meisten genutzt wird, ob fürs Coding an sich,
+Da in diesem Bereich Englisch die Sprache ist, die am meisten genutzt wird, ob fürs Coding an sich,
 Kommentare im Code aber auch die Zusammenarbeit mit internationalen Kolleg:innen, habe ich entschieden dieses Projekt auf Englisch zu verfassen.
 
 ---
@@ -31,7 +31,7 @@ explain_text_engl = """
 ### Hello dear visitor!
 
 My name is Stephan and I am a recent graduate with a Masters Degree in Data Science.
-This side/dashboard is a learning project to strengthen my ability with Software engineering best practices for Data Science and AI Engineerig.  
+This side/dashboard is a learning project to strengthen my ability with Software engineering best practices for Data Science and AI Engineering.  
 Use the menus below to find out more about the project. The code of the project (incl. tests) is publicly available on my GitHub under:
 
 https://github.com/Steph-Z/stock_platform 
