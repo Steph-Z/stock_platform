@@ -58,14 +58,14 @@ timeframe_buttons = html.Div(
 
 
 sidebar = html.Div(
-    [   html.Hr(),
+    [   html.Br(),
         html.H4("Plot Customization", className="fw-bold"),
-        html.Hr(),
+        html.Hr(className="my-1"),
         html.Label("Select Timeframe:"),
         timeframe_buttons,
-        html.Span('The Plot is interactive! Click and drag your mouse to view a custom window.'),
+        html.Span('The Plot is interactive! Click and drag your mouse to view a custom window.', className= 'mt-2'),
         html.Span('Double click in the plot to reset it.'),
-        html.Hr(),        
+        html.Hr(className="my-1"),        
         html.Label("Chart Type:"),
         dcc.Dropdown(
             id="chart-type-input",
@@ -83,12 +83,12 @@ sidebar = html.Div(
                 "color": flatly_colors["primary"]
                 }
         ),
-        html.Hr(),
+        html.Hr(className="my-1"),
         html.Label('Y-axis scale:'),
         dbc.RadioItems(['Linear', 'Log'], 'Linear', id = 'axis_scaling', inline= True,
                        labelStyle= {'margin-right': '8px'},
                        style= {'font-size': 14}),
-        html.Hr(),
+        html.Hr(className="my-1"),
         html.Label("Example Tickers/ ISIN's:", className="mt-3 fw-bold"),
         html.Ul([
             html.Li([html.B("Apple"), ": AAPL or US0378331005"]),
@@ -108,7 +108,7 @@ sidebar = html.Div(
         "backgroundColor": flatly_colors["primary"],
         "padding": "1rem",
         "position": "fixed", 
-        "top": "80px",  
+        "top": "85px",  
         "left": 0,
         "bottom": 0,
         "width": "18rem",     
@@ -131,8 +131,7 @@ plot_layout = html.Div(
         )
     ],
     style={
-        "margin-left": "18rem",
-        "padding": "1rem"
+        "margin-left": "18rem"
     }
 )
 
@@ -147,8 +146,7 @@ tabs = dbc.Tabs(
     id="tabs",
     active_tab="table",
     style={
-        "margin-left": "18rem",   # push it to the right of the sidebar
-        "padding": "1rem"
+        "margin-left": "18rem"   # push it to the right of the sidebar
     }
 )
 ###########

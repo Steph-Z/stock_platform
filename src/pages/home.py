@@ -7,7 +7,7 @@ explain_text_german = """
 ### Hallo liebe Besucher:innen! 
 
 Mein Name ist Stephan und ich habe vor kurzem meinen Master in Data Science abgeschlossen.
-Diese Seite/Dashboard ist ein "passion project" um noch mehr über saubere Software und AI Engineering praktiken zu lernen.
+Diese Seite/Dashboard ist ein "passion project" um noch mehr über saubere Software- und AI-Engineering-Praktiken zu lernen.
 Nutzt gern die Menüs unter diesem Text um zu sehen welche Techniken ich dabei umsetze und was man auf dieser Seite machen kann. Der gesamte Code des Projekts kann öffentlich auf meinem GitHub eingesehen werden (inkl. Tests):
 
 https://github.com/Steph-Z/stock_platform 
@@ -30,8 +30,8 @@ Kommentare im Code aber auch die Zusammenarbeit mit internationalen Kolleg:innen
 explain_text_engl = """ 
 ### Hello dear visitor!
 
-My name is Stephan and I am a recent graduate with a Masters Degree in Data Science.
-This side/dashboard is a learning project to strengthen my ability with Software engineering best practices for Data Science and AI Engineering.  
+My name is Stephan and I am a recent graduate with a a Master's Degree in Data Science.
+This side/dashboard is a learning project to strengthen my skills in software engineering best practices for Data Science and AI Engineering.  
 Use the menus below to find out more about the project. The code of the project (incl. tests) is publicly available on my GitHub under:
 
 https://github.com/Steph-Z/stock_platform 
@@ -42,26 +42,26 @@ https://github.com/Steph-Z/stock_platform
 
 ---
 
-Although I am German, English is the language used to write and document code most of the time. Additionally collaboration across international teams requires English as well. As a result, I decided to use English for this project.
+Although I am German, English is the language used to write and document code most of the time. Additionally, collaboration across international teams requires English as well. As a result, I decided to use English for this project.
 
 ---
 
-**I hope you enjoy your visit on the page as much as I had building it** (except for centering the different blocks of the layout, that was pain)!
+**I hope you enjoy your visit to this page as much as I enjoyed building it** (except for centering the different blocks of the layout, that was pain)!
 """
 
 software_text = """
 #### Git/GitHub:  
   I work on two branches: The main branch is always deployed (see CI/CD).  
-  On the working branch I update the app and once I like the new state, I push to main.  
+  On the working , I update the app and once I like the new state, I push to main.  
   Since this project is done by myself, I don’t worry too much about committing every small local change immediately.
 
 ---
 
 #### Testing:  
-  At the moment, I’m using a small set of unit tests and a basic integration test for the Ticker/ISIN input.  
-  I set them up to minimize calls to yfinance using a custom checker during testing.  
+  At the moment, I'm using a small set of unit tests and a basic integration test for the Ticker/ISIN input.  
+  I set them up to minimize yfinance calls by using a custom checker.  
   Even in production I try to reduce calls to yfinance by validating ISIN inputs using a regular expression and Luhn's algorithm.  
-  In the coming days, I plan to add a test for the dashboard itself by emulating user inputs, so a more thorough integration test of the overall app.
+  In the coming days, I plan to add a test for the dashboard itself by emulating user inputs, to provide a more thorough integration test of the overall app.
 
 ---
 
@@ -80,7 +80,7 @@ software_text = """
 ---
 
 #### Caching Strategy:  
-  A users Inputs/ Stock downloads are cached for up to 10 minutes for up to 10 Stocks. 
+  A user's inputs/stock downloads are cached for up to 10 minutes for up to 10 Stocks. 
 """
 
 what_you_can_do = """
@@ -90,12 +90,12 @@ The dashboard displays a chart of the last 5 years and a table showing recent tr
 
 **LLM Analysis**
 
-The LLM Tab is connected to the HuggingFace API. Throuh a prompt injection, RAG-inspired, pipeline an LLM is queried qith a standardizes prompt to explain 
-the stocks price movement for the selected period. For that the llm has acess to the relevant data. 
-To control the cost of this feature only a three month period can be used, also the additional questions input has a limited input size. 
+The LLM Tab is connected to the HuggingFace API. Through a prompt injection, RAG-inspired, pipeline an LLM is queried with a standardized prompt to explain 
+the stock's price movement for the selected period. For that the LLM has access to the relevant data. 
+To control costs, only a three-month period can be selected, also the additional questions input has a limited input size. 
 In addition, the number of output tokens is capped.
 
-**Feel free to test everything in the Dashboard tab**
+**Feel free to explore everything in the Dashboard tab"**
 
 ---
 
@@ -107,7 +107,7 @@ Here are the next major improvements I plan to implement:
 Add full integration tests that emulate user inputs across the dashboard.
 
 **Metrics**
-Add a comprehensive table with metrics like volatility etc. in the tab. 
+Add a comprehensive table with metrics such as volatility in the tab. 
 Add custom timeframes for the metrics next to the standard
 
 **Plot**
