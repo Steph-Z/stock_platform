@@ -58,8 +58,7 @@ timeframe_buttons = html.Div(
 
 
 sidebar = html.Div(
-    [   html.Br(),
-        html.H4([
+    [   html.H4([
                     "Plot Settings: ",
                     html.Span(id='plot_headline', style={"color": flatly_colors['success']})
                 ],
@@ -109,16 +108,16 @@ sidebar = html.Div(
         
     ],
     style={
-        "color": "white",
-        "backgroundColor": flatly_colors["primary"],
-        "padding": "1rem",
-        "position": "fixed", 
-        "top": "85px",  
-        "left": 0,
-        "bottom": 0,
-        "width": "18rem",     
-        "overflowY": "auto"
-    }
+    "color": "white",
+    "backgroundColor": flatly_colors["primary"],
+    "position": "fixed",
+    "top": "90px",
+    "left": 0,
+    "bottom": 0,
+    "width": "19rem",
+    "padding": "1rem",
+    "overflowY": "auto"
+}
 )
 #Plot and Table definition:
 

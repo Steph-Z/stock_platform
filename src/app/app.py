@@ -138,7 +138,8 @@ navbar = dbc.Navbar(
     ),
     color='primary',
     dark=True,
-    sticky='top'
+    sticky='top',
+    style={"paddingTop": "0.25rem", "paddingBottom": "0.1rem"}
 )
  
 ################################################################################################
