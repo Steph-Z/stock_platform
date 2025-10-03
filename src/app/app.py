@@ -123,8 +123,8 @@ navbar = dbc.Navbar(
             dbc.Col(page_links, width='auto', className='d-flex align-items-center'),
             dbc.Col(
             html.Div([
-                html.H2(perma_text, style={'color': 'white', 'marginRight': '8px'}),
-                html.H6(perma_subtext, style={'color': 'lightgray', 'marginTop': '8px'})
+                html.H2(perma_text, style={'color': flatly_colors['warning'], 'marginRight': '8px'}),
+                html.H6(perma_subtext, style={'color': flatly_colors['warning'], 'marginTop': '4px'})
             ],
             style={'display': 'flex', 'alignItems': 'flex-end'}),
             className='d-flex justify-content-center',
