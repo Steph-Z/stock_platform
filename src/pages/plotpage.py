@@ -63,7 +63,7 @@ sidebar = html.Div(
         html.Hr(className="my-1"),
         html.Label("Select Timeframe:"),
         timeframe_buttons,
-        html.Span('The Plot is interactive! Click and drag your mouse to view a custom window.', className= 'mt-2'),
+        html.Span('The Plot is interactive! Click and drag your mouse to view a custom window.', className= 'mt-1'),
         html.Span('Double click in the plot to reset it.'),
         html.Hr(className="my-1"),        
         html.Label("Chart Type:"),
@@ -89,7 +89,7 @@ sidebar = html.Div(
                        labelStyle= {'margin-right': '8px'},
                        style= {'font-size': 14}),
         html.Hr(className="my-1"),
-        html.Label("Example Tickers/ ISIN's:", className="mt-3 fw-bold"),
+        html.Label("Example Tickers/ ISIN's:", className="mt-1 fw-bold"),
         html.Ul([
             html.Li([html.B("Apple"), ": AAPL or US0378331005"]),
             html.Li([html.B("Microsoft"), ": MSFT or US5949181045"]),

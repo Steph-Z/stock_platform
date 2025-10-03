@@ -3,6 +3,7 @@ import plotly.graph_objects as go
 
 import pandas as pd
 import yfinance as yf
+from utils.config import flatly_colors
 
 
 
@@ -20,7 +21,9 @@ def plot_stock_chart(data: pd.DataFrame, comp_name:str, ticker:str, metadata , c
                 fig = px.line(data_frame= data,
                         x= 'Date',
                         y = 'Close',
-                        labels = {'Close': y_name, 'Date': 'Date'})
+                        labels = {'Close': y_name, 'Date': 'Date'}
+                        )
+                fig.update_traces(line=dict(color=flatly_colors['success']))
         else:
                 fig = go.Figure( data=[go.Candlestick(x=data['Date'],
                         open=data['Open'],
