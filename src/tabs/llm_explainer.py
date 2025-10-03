@@ -14,13 +14,13 @@ from utils.llm_client import run_deepseek
 
 ####
 #initial Text
-llm_explainer_headline = "LLM Stock movement explanation"
+llm_explainer_headline = "LLM Stock Movement Explanation"
 llm_explainer_text = """
-Are you unsure about why a Stock moved in a certain direction in a period of time? Do you see large changes in short periods of time you can not explain ?
-Use the tools on the bottom left and the plot above to find out why! An LLM will explain why the chosen stock moved that way in the time period chosen in the plot above.
-If you are particularly interested in a very specific time period in addition to a larger window, use the configuration below to adjust the explanation to your needs! 
+Are you unsure about why a stock moved in a certain direction in a period of time? Do you see large changes in short periods of time you cannot explain?
+Use the tools at the bottom left and the plot above to find out why! An LLM will explain why the chosen stock moved that way in the time period chosen in the plot above.
+If you are particularly interested in a very specific time period in addition to a larger window, use the configuration below to adjust it to your needs! 
 
-**Disclaimer:** This tool is connected to the Hugging Face API. The models WILL come up with wrong explanations.
+**Disclaimer:** This tool is connected to the Hugging Face API. The model may come up with wrong explanations.
 Use the 'Home' Menu to find out how the backend works and how the prompt is designed.
 This tool ONLY serves an educational purpose and the information is not reliable.
 """
@@ -136,7 +136,7 @@ output_window =  dbc.Col([
                 dbc.Spinner(
                     dcc.Markdown("""**Feel free to ask your questions!**
                                  Please keep in mind that hosting an endpoint to an LLM can come with considerable cost. Although I implemented safety measures against high costs. 
-                                 This is not a tool to get real financial advise. If you are interested in technical details, I have a thourough explanation (upcoming) in the Home tab. 
+                                 This is not a tool to get real financial advice. If you are interested in technical details, I have a thorough explanation (upcoming) in the Home tab. 
                                  """, id="llm_output_box"),
                     color= flatly_colors['success']
                 )
