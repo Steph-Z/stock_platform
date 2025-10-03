@@ -7,6 +7,7 @@ import plotly.io as pio
 import dash_bootstrap_components as dbc
 import pandas as pd
 import datetime as dt
+import numpy as np
 
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
 from utils.plots import plot_stock_chart
@@ -179,23 +180,26 @@ layout = dbc.Container([
     Input('ticker', 'data'),
     Input('chart-type-input', 'value'),
     Input('plot_range', 'data'),
+    Input('stocklineplot', 'relayoutData'),
     State('stocklineplot', 'figure')
 )
 
-def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,ticker, chart_type, range_dict, figure_old):
+def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,ticker, chart_type, range_dict, relayout ,figure_old):
     #set date for the figure
 
     start_date = pd.to_datetime(range_dict['beginning'])
     end_date = pd.to_datetime(range_dict['end'])
+    print(axis_type)
     
     # If the figure already has this exact range, skip update
     if figure_old:
         old_range = figure_old.get("layout", {}).get("xaxis", {}).get("range")
         old_chart_type = figure_old.get("layout", {}).get("meta", {}).get("chart_type")
         old_chart_comp = figure_old.get("layout", {}).get("meta", {}).get('name_comp')
+        old_chart_axis = figure_old.get("layout", {}).get("meta", {}).get('axis_type')
         if old_range:
             old_start, old_end = map(pd.to_datetime, old_range)
-            if old_start == start_date and old_end == end_date and old_end == end_date and old_chart_type == chart_type and old_chart_comp == stock_input_value:
+            if old_start == start_date and old_end == end_date and old_end == end_date and old_chart_type == chart_type and old_chart_comp == stock_input_value and old_chart_axis == axis_type:
                 raise PreventUpdate
             
     #empty plot if important data is missing
@@ -209,14 +213,23 @@ def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,
     df =decode_records_data(stock_data_records)
     fig = plot_stock_chart(df, comp_name= stock_input_value, ticker= ticker, chart_type= chart_type, metadata= metadata)
     
-    
     xaxis_range = [start_date,end_date]
                
     fig.update_xaxes(range=xaxis_range)
-    fig.update_layout(meta={"chart_type": chart_type, 'name_comp': stock_input_value}) #so we store the chart type of a figure to prevent not needed updates
-                          
-    #fig.update_yaxes(type = axis_type.lower())
-    #fig.update_layout(height =  600)
+    fig.update_yaxes(type = axis_type.lower())
+    
+    if relayout and ("yaxis.range[0]" in relayout and "yaxis.range[1]" in relayout):
+        y_range = [relayout["yaxis.range[0]"], relayout["yaxis.range[1]"]]
+        fig.update_yaxes(range=y_range)
+    else:
+        #get mins and max in visible range and scale accordingly
+        df_shown = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
+        if axis_type.lower() == 'log':
+            fig.update_yaxes(range = [np.log10(df_shown['Close'].min()*0.95), np.log10(df_shown['Close'].max()*1.05)])
+        else:
+            fig.update_yaxes(range = [df_shown['Close'].min()*0.95, df_shown['Close'].max()*1.05])
+                         
+    fig.update_layout(meta={"chart_type": chart_type, 'name_comp': stock_input_value, 'axis_type': axis_type}) #so we store the chart type of a figure to prevent not needed updates
 
     return fig, f'{stock_input_value}'
 
