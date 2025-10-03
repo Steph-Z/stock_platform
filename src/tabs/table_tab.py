@@ -7,12 +7,13 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 
 from utils.transforms import decode_records_data, add_currency_information
+from utils.config import flatly_colors
 
 
 
 
 table_layout = html.Div(
-    [   html.H4(id='table_headline'),
+    [   dbc.Row(html.H5(id='table_headline', className = 'text-success mb-0',  style={"padding": "0.8rem 1.25rem",   "paddingBottom": "1rem"}), style= {'background': flatly_colors['primary'], 'marginLeft': '1px', 'marginRight': '1px'}),
         html.Br(),
         dbc.Row(
             dbc.Col(id='stock_table', width=12))

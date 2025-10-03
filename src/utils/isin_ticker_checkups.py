@@ -16,6 +16,8 @@ def remove_dashes(isin_input: str):
     return newstr
 
 def isValid_ISIN_Code(isin_input: str):
+    '''Uses a regular experession to check a given isin/str input for the logic or a ISIN
+    returns a bool depending on the checks outcome'''
     
     ##https://www.geeksforgeeks.org/dsa/how-to-validate-isin-using-regular-expressions/
 
@@ -45,7 +47,8 @@ def isValid_ISIN_Code(isin_input: str):
 def check_luhn(isin_input):
     '''the str will have passed the is isin valid function. 
     checks if the isin is correct by employing luhn algorithm
-    #https://en.wikipedia.org/wiki/Luhn_algorithm, even with pseudocode '''
+    #https://en.wikipedia.org/wiki/Luhn_algorithm, even with pseudocode.
+    # returns a bool if the check digit is correct'''
     
     #Takes care of the possible characters in the isin
     transformed_isin = ""
@@ -74,7 +77,8 @@ def check_luhn(isin_input):
 def check_ticker(user_input: str, check_function = None):
     '''takes a users input that resembles a ticker and checks if it is valid,
     has an input for the check function to avoid online lookup during testing,
-    to check, see if it has a price during market hours'''
+    to check, see if it has a price during market hours
+    returns a bool'''
     
     if check_function is None:
         check_function = yf.Ticker
@@ -88,7 +92,9 @@ def check_ticker(user_input: str, check_function = None):
 
 ############
 def check_isin_ticker_input(user_input:str, check_function = None):
-    '''checks the users input of stock data and returns true or false depending on its validity'''
+    '''checks the users input of stock data and returns true or false depending on its validity.
+    applies the cleanup functions to the user input as well.
+    calls the other check functions to return true or false dependng on a valid input or not. '''
     
     #At this point I will stop optimizing the code/isin/ticker checkup.
     #IT could still be improved i.e. i could save sucessfull checks in a lookup to avoid multiple checks of the same thing 

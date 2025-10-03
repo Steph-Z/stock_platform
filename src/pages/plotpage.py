@@ -7,6 +7,7 @@ import plotly.io as pio
 import dash_bootstrap_components as dbc
 import pandas as pd
 import datetime as dt
+import numpy as np
 
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
 from utils.plots import plot_stock_chart
@@ -58,14 +59,18 @@ timeframe_buttons = html.Div(
 
 
 sidebar = html.Div(
-    [   html.Hr(),
-        html.H4("Plot Customization", className="fw-bold"),
-        html.Hr(),
+    [   html.H4([
+                    "Plot Settings: ",
+                    html.Span(id='plot_headline', style={"color": flatly_colors['success']})
+                ],
+                className="fw-bold",
+                style={"whiteSpace": "normal", "overflowWrap": "break-word", "wordBreak": "break-word"}),
+        html.Hr(className="my-1"),
         html.Label("Select Timeframe:"),
         timeframe_buttons,
-        html.Span('The Plot is interactive! Click and drag your mouse to view a custom window.'),
+        html.Span('The Plot is interactive! Click and drag your mouse to view a custom window.', className= 'mt-1'),
         html.Span('Double click in the plot to reset it.'),
-        html.Hr(),        
+        html.Hr(className="my-1"),        
         html.Label("Chart Type:"),
         dcc.Dropdown(
             id="chart-type-input",
@@ -83,13 +88,13 @@ sidebar = html.Div(
                 "color": flatly_colors["primary"]
                 }
         ),
-        html.Hr(),
+        html.Hr(className="my-1"),
         html.Label('Y-axis scale:'),
         dbc.RadioItems(['Linear', 'Log'], 'Linear', id = 'axis_scaling', inline= True,
                        labelStyle= {'margin-right': '8px'},
                        style= {'font-size': 14}),
-        html.Hr(),
-        html.Label("Example Tickers/ ISIN's:", className="mt-3 fw-bold"),
+        html.Hr(className="my-1"),
+        html.Label("Example Tickers/ ISIN's:", className="mt-1 fw-bold"),
         html.Ul([
             html.Li([html.B("Apple"), ": AAPL or US0378331005"]),
             html.Li([html.B("Microsoft"), ": MSFT or US5949181045"]),
@@ -104,22 +109,21 @@ sidebar = html.Div(
         
     ],
     style={
-        "color": "white",
-        "backgroundColor": flatly_colors["primary"],
-        "padding": "1rem",
-        "position": "fixed", 
-        "top": "80px",  
-        "left": 0,
-        "bottom": 0,
-        "width": "18rem",     
-        "overflowY": "auto"
-    }
+    "color": "white",
+    "backgroundColor": flatly_colors["primary"],
+    "position": "fixed",
+    "top": "90px",
+    "left": 0,
+    "bottom": 0,
+    "width": "19rem",
+    "padding": "1rem",
+    "overflowY": "auto"
+}
 )
 #Plot and Table definition:
 
 plot_layout = html.Div(
     [
-        html.H4(id='plot_headline'),
         dbc.Row(
             dbc.Col(
                 dcc.Graph(
@@ -131,24 +135,22 @@ plot_layout = html.Div(
         )
     ],
     style={
-        "margin-left": "18rem",
-        "padding": "1rem"
+        "margin-left": "18rem"
     }
 )
 
 #####Tabs layout 
 
 tabs = dbc.Tabs(
-    [
+    [   
+        dbc.Tab(label="Ask an LLM", tab_id="llm"),
         dbc.Tab(label="Table", tab_id="table"),
-        dbc.Tab(label="Metrics", tab_id="metrics"),
-        dbc.Tab(label="Ask an LLM", tab_id="llm")
+        dbc.Tab(label="Metrics", tab_id="metrics")        
     ],
     id="tabs",
-    active_tab="table",
+    active_tab="llm",
     style={
-        "margin-left": "18rem",   # push it to the right of the sidebar
-        "padding": "1rem"
+        "margin-left": "18rem"   # push it to the right of the sidebar
     }
 )
 ###########
@@ -178,22 +180,26 @@ layout = dbc.Container([
     Input('ticker', 'data'),
     Input('chart-type-input', 'value'),
     Input('plot_range', 'data'),
+    Input('stocklineplot', 'relayoutData'),
     State('stocklineplot', 'figure')
 )
 
-def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,ticker, chart_type, range_dict, figure_old):
+def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,ticker, chart_type, range_dict, relayout ,figure_old):
     #set date for the figure
 
     start_date = pd.to_datetime(range_dict['beginning'])
     end_date = pd.to_datetime(range_dict['end'])
+    print(axis_type)
     
     # If the figure already has this exact range, skip update
     if figure_old:
         old_range = figure_old.get("layout", {}).get("xaxis", {}).get("range")
         old_chart_type = figure_old.get("layout", {}).get("meta", {}).get("chart_type")
+        old_chart_comp = figure_old.get("layout", {}).get("meta", {}).get('name_comp')
+        old_chart_axis = figure_old.get("layout", {}).get("meta", {}).get('axis_type')
         if old_range:
             old_start, old_end = map(pd.to_datetime, old_range)
-            if old_start == start_date and old_end == end_date and old_end == end_date and old_chart_type == chart_type:
+            if old_start == start_date and old_end == end_date and old_end == end_date and old_chart_type == chart_type and old_chart_comp == stock_input_value and old_chart_axis == axis_type:
                 raise PreventUpdate
             
     #empty plot if important data is missing
@@ -201,22 +207,31 @@ def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,
         empty_fig = go.Figure()
         empty_fig.update_xaxes(range= [start_date, end_date])
         
-        return empty_fig, f'Interactive plot of the {stock_input_value} stock'
+        return empty_fig, f'{stock_input_value}'
     
     #if we have data decode it and build the figure
     df =decode_records_data(stock_data_records)
     fig = plot_stock_chart(df, comp_name= stock_input_value, ticker= ticker, chart_type= chart_type, metadata= metadata)
     
-    
     xaxis_range = [start_date,end_date]
                
     fig.update_xaxes(range=xaxis_range)
-    fig.update_layout(meta={"chart_type": chart_type}) #so we store the chart type of a figure to prevent not needed updates
-                          
-    #fig.update_yaxes(type = axis_type.lower())
-    #fig.update_layout(height =  600)
+    fig.update_yaxes(type = axis_type.lower())
+    
+    if relayout and ("yaxis.range[0]" in relayout and "yaxis.range[1]" in relayout):
+        y_range = [relayout["yaxis.range[0]"], relayout["yaxis.range[1]"]]
+        fig.update_yaxes(range=y_range)
+    else:
+        #get mins and max in visible range and scale accordingly
+        df_shown = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
+        if axis_type.lower() == 'log':
+            fig.update_yaxes(range = [np.log10(df_shown['Close'].min()*0.95), np.log10(df_shown['Close'].max()*1.05)])
+        else:
+            fig.update_yaxes(range = [df_shown['Close'].min()*0.95, df_shown['Close'].max()*1.05])
+                         
+    fig.update_layout(meta={"chart_type": chart_type, 'name_comp': stock_input_value, 'axis_type': axis_type}) #so we store the chart type of a figure to prevent not needed updates
 
-    return fig, f'Interactive plot of the {stock_input_value} stock'
+    return fig, f'{stock_input_value}'
 
 
 #callback for the button presses

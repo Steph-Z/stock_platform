@@ -70,7 +70,7 @@ stock_input = html.Div(
         dbc.Row(
             [
                 dbc.Col(
-                    html.Span('Enter ISIN/Ticker:', style={'color': 'white', 'marginRight': '10px'}),
+                    html.Span('Enter ISIN/Ticker:', style={'color': 'white', 'marginRight': '8px'}),
                     width='auto'
                 ),
                 dbc.Col(
@@ -85,10 +85,11 @@ stock_input = html.Div(
                     ),
                     width='auto',
                 ),
-                dbc.Col(
-                    dbc.Button('Enter', id='stockbutton', color='secondary', size='sm', className='ms-auto'),
-                    width='auto',
-                ),
+                dbc.Col(dbc.Button('Enter', id='stockbutton', color='success', size='sm', className='ms-auto', style= {'marginLeft': '8px','marginRight': '8px'}),
+
+                         #dbc.Button('Collapse Navbar', id='toggle-navbar-btn', color='secondary', size='sm', class_name= 'ms-auto')
+                         #decided against implementing this for now
+                width='auto'),
             ],
             align='center',
             className='g-2',
@@ -99,7 +100,7 @@ stock_input = html.Div(
                 html.Span(id='current_stock', style={'color': 'white'}),
                 width='auto'  
             ),
-            className='mt-2' 
+            class_name='mt-2' 
         ),
         html.Br()
     ]
@@ -122,8 +123,8 @@ navbar = dbc.Navbar(
             dbc.Col(page_links, width='auto', className='d-flex align-items-center'),
             dbc.Col(
             html.Div([
-                html.H2(perma_text, style={'color': 'white', 'marginRight': '10px'}),
-                html.H6(perma_subtext, style={'color': 'lightgray', 'marginTop': '8px'})
+                html.H2(perma_text, style={'color': flatly_colors['warning'], 'marginRight': '8px'}),
+                html.H6(perma_subtext, style={'color': flatly_colors['warning'], 'marginTop': '4px'})
             ],
             style={'display': 'flex', 'alignItems': 'flex-end'}),
             className='d-flex justify-content-center',
@@ -137,7 +138,8 @@ navbar = dbc.Navbar(
     ),
     color='primary',
     dark=True,
-    sticky='top'
+    sticky='top',
+    style={"paddingTop": "0.25rem", "paddingBottom": "0.1rem"}
 )
  
 ################################################################################################
@@ -164,7 +166,7 @@ app.layout = html.Div(
     [
     dcc.Location(id='url', refresh=False),
     navbar,
-    html.Div(id='page-content', style={"padding": "20px"}),
+    html.Div(id='page-content', style={"padding": "8px"}),
     global_stores
     ])
 

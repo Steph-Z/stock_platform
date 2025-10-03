@@ -157,13 +157,11 @@ llm_explainer_layout = html.Div([
     dbc.Accordion([
         dbc.AccordionItem(
             [
-                dcc.Markdown(llm_explainer_text, className='text-center')
+                dcc.Markdown(llm_explainer_text, className='mb-0 text-center')
             ],
             title=html.Div([
-                html.H3(llm_explainer_headline, className='text-center')
-            ], style={
-                "padding": "1rem"
-            })
+                html.H5(llm_explainer_headline, className='mb-0 text-center')
+            ])
         )
     ]),
     html.Div(id="llm_validation_check"), #to throw altert if the input is too long

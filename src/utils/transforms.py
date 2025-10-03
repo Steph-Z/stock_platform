@@ -22,6 +22,7 @@ def prepare_stock_data(ticker):
     data = yf.download(f'{ticker}', period = '5y')
     data.columns = data.columns.get_level_values(0) #get rid of the multi index for easier cashing
     data = data.reset_index()
+    
    
     return data
 
