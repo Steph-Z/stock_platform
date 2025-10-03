@@ -59,7 +59,12 @@ timeframe_buttons = html.Div(
 
 sidebar = html.Div(
     [   html.Br(),
-        html.H4("Plot Customization", className="fw-bold"),
+        html.H4([
+                    "Plot Settings: ",
+                    html.Span(id='plot_headline', style={"color": flatly_colors['success']})
+                ],
+                className="fw-bold",
+                style={"whiteSpace": "normal", "overflowWrap": "break-word", "wordBreak": "break-word"}),
         html.Hr(className="my-1"),
         html.Label("Select Timeframe:"),
         timeframe_buttons,
@@ -119,7 +124,6 @@ sidebar = html.Div(
 
 plot_layout = html.Div(
     [
-        html.H4(id='plot_headline'),
         dbc.Row(
             dbc.Col(
                 dcc.Graph(
@@ -138,13 +142,13 @@ plot_layout = html.Div(
 #####Tabs layout 
 
 tabs = dbc.Tabs(
-    [
+    [   
+        dbc.Tab(label="Ask an LLM", tab_id="llm"),
         dbc.Tab(label="Table", tab_id="table"),
-        dbc.Tab(label="Metrics", tab_id="metrics"),
-        dbc.Tab(label="Ask an LLM", tab_id="llm")
+        dbc.Tab(label="Metrics", tab_id="metrics")        
     ],
     id="tabs",
-    active_tab="table",
+    active_tab="llm",
     style={
         "margin-left": "18rem"   # push it to the right of the sidebar
     }
@@ -189,9 +193,10 @@ def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,
     if figure_old:
         old_range = figure_old.get("layout", {}).get("xaxis", {}).get("range")
         old_chart_type = figure_old.get("layout", {}).get("meta", {}).get("chart_type")
+        old_chart_comp = figure_old.get("layout", {}).get("meta", {}).get('name_comp')
         if old_range:
             old_start, old_end = map(pd.to_datetime, old_range)
-            if old_start == start_date and old_end == end_date and old_end == end_date and old_chart_type == chart_type:
+            if old_start == start_date and old_end == end_date and old_end == end_date and old_chart_type == chart_type and old_chart_comp == stock_input_value:
                 raise PreventUpdate
             
     #empty plot if important data is missing
@@ -199,7 +204,7 @@ def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,
         empty_fig = go.Figure()
         empty_fig.update_xaxes(range= [start_date, end_date])
         
-        return empty_fig, f'Interactive plot of the {stock_input_value} stock'
+        return empty_fig, f'{stock_input_value}'
     
     #if we have data decode it and build the figure
     df =decode_records_data(stock_data_records)
@@ -209,12 +214,12 @@ def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,
     xaxis_range = [start_date,end_date]
                
     fig.update_xaxes(range=xaxis_range)
-    fig.update_layout(meta={"chart_type": chart_type}) #so we store the chart type of a figure to prevent not needed updates
+    fig.update_layout(meta={"chart_type": chart_type, 'name_comp': stock_input_value}) #so we store the chart type of a figure to prevent not needed updates
                           
     #fig.update_yaxes(type = axis_type.lower())
     #fig.update_layout(height =  600)
 
-    return fig, f'Interactive plot of the {stock_input_value} stock'
+    return fig, f'{stock_input_value}'
 
 
 #callback for the button presses

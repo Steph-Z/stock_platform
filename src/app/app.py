@@ -85,12 +85,10 @@ stock_input = html.Div(
                     ),
                     width='auto',
                 ),
-                dbc.Col([
-                    dbc.Button('Enter', id='stockbutton', color='success', size='sm', className='ms-auto', style= {'marginLeft': '8px','marginRight': '8px'}),
+                dbc.Col(dbc.Button('Enter', id='stockbutton', color='success', size='sm', className='ms-auto', style= {'marginLeft': '8px','marginRight': '8px'}),
 
-                         dbc.Button('Collapse Navbar', id='toggle-navbar-btn', color='secondary', size='sm', class_name= 'ms-auto')
-                    
-                ],
+                         #dbc.Button('Collapse Navbar', id='toggle-navbar-btn', color='secondary', size='sm', class_name= 'ms-auto')
+                         #decided against implementing this for now
                 width='auto'),
             ],
             align='center',
