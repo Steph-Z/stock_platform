@@ -28,6 +28,7 @@ For this project I am using:
 - **gunicorn** - as a HTTP server
 - **Render** - to host the dashboard
 - **cachetools** - for caching some data of a session
+- **hugging face** - for LLM inference
 ---
 
 ##  Deployment
@@ -44,6 +45,7 @@ The app is hosted under:
 - Search for stocks via **ISIN or Tracker** (or ticker symbol).  
 - Visualize price history with different **chart types** (line, candlestick, etc.).  
 - Choose from **predefined timeframes** or interact with the charts
+- Ask an LLM questions about how and why a stocked moved in a certain way
 
 ---
 
@@ -64,3 +66,6 @@ Use the `requirements.txt` file to install dependencies:
 4. **Install the project in editable mode**  
 This allows you to make changes to the source code without reinstalling:
 pip install -e "root_of_project"
+
+5. **Create a.env**
+To connect to the hugging face API create an account and get an API key. Store it in the .env
