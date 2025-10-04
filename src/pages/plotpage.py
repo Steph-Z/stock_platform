@@ -189,7 +189,6 @@ def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,
 
     start_date = pd.to_datetime(range_dict['beginning'])
     end_date = pd.to_datetime(range_dict['end'])
-    print(axis_type)
     
     # If the figure already has this exact range, skip update
     if figure_old:
@@ -219,7 +218,10 @@ def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,
     fig.update_yaxes(type = axis_type.lower())
     
     if relayout and ("yaxis.range[0]" in relayout and "yaxis.range[1]" in relayout):
-        y_range = [relayout["yaxis.range[0]"], relayout["yaxis.range[1]"]]
+        if axis_type.lower() == 'log':
+            y_range = [np.log10(relayout["yaxis.range[0]"]), np.log10(relayout["yaxis.range[1]"])]        
+        else:
+            y_range = [relayout["yaxis.range[0]"], relayout["yaxis.range[1]"]]
         fig.update_yaxes(range=y_range)
     else:
         #get mins and max in visible range and scale accordingly
