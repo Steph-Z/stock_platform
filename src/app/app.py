@@ -1,18 +1,19 @@
+#For an easy workflow use Strg + g and then Strg +0 to collapse all blocks
+#This way it is easy to navigate each file 
+#This is the main entry for local development.
+#File contains the Navbar, side navigation logic, data retrieval and global variables used to store information
+#Imports
 from dash import Dash, dcc, html, Input, Output, State
-
 import dash_bootstrap_components as dbc
 import yfinance as yf
 import plotly.graph_objects as go
 import plotly.io as pio
 import logging
 import pandas as pd
-#adding a cash
 
-
-
+#Custom inports 
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
 from utils.transforms import isin_ticker_to_ticker, prepare_stock_data, get_stock_metadata, clean_comp_name
-
 from utils.config import flatly_colors
 
 #Import of the LAyouts of other sides 
@@ -97,7 +98,7 @@ stock_input = html.Div(
 
         dbc.Row(
             dbc.Col(
-                html.Span(id='current_stock', style={'color': 'white'}),
+                html.Span(id='current_stock', style={'color': 'white'},children= ''),
                 width='auto'  
             ),
             class_name='mt-2' 
@@ -170,16 +171,6 @@ app.layout = html.Div(
     global_stores
     ])
 
-#Collapsing the navbar
-@app.callback(Output("navbarcollapse", "is_open"),
-              Input("navbar-toggler", "n_clicks"),
-              State("navbarcollapse", "is_open")
-)
-
-def toggle_navbar(n, is_open):
-    if n:
-        return not is_open
-    return is_open
 
 #callback to get the right page
 @app.callback(Output('page-content', 'children'), Input('url', 'pathname'))
@@ -202,24 +193,36 @@ def display_page(path):
 )
 
 def retrieve_stock_data( n_clicks, stock_input_value):
+    '''uses the user input to get the stock data of the selected stock
+    Checks the validity of the input first and then returns the data
+    Messages the user in case the input is wrong
+    NExt ot the data this function retrieves the metadata of the stock incl.
+    name, additional information. these are stored in global storing variables'''
+    
     if not stock_input_value:
         return [], None, None, 'Invalid, No Input detected'
 
-    try:    
+    try:
+        check_bool = check_isin_ticker_input(stock_input_value) #applies checks, todo move cleanup to only one place.
+        if not check_bool:
+            return [], None, None, f'Invalid: {stock_input_value} is not a valid ticker or ISIN', None 
+            
         normed_stock_input =  input_case_insensitive(remove_dashes(stock_input_value))
         ticker = isin_ticker_to_ticker(normed_stock_input) #ToDo more robust
-        data = prepare_stock_data(ticker) #To do more robust, data is in json format here 
+        data = prepare_stock_data(ticker) #To do more robust
         metadata = get_stock_metadata(ticker)
+        print(ticker)
         
         if data.empty:            
-            return [], None, None, f'Input: {normed_stock_input} exists, but no data is available', None
-        #get the company name for display purposes throuout the app
+            return [], None, None, f'Input: {normed_stock_input} may exist, but no data is available', None
+        
+        #get the company name for display purposes throughout the app
         #PROBLEM: some international tickers do not have the displayNAme (like adidas) so we need something more robust here 
         comp_name = comp_name = metadata.get('shortName') or metadata.get('displayName') or metadata.get('longName') or ticker
         #Problem: international stocks like i.e infineon are poorly documented and or have their Stock type in the company name this 
         #will lead to trailing letters in this case 'INFINEON TECHNOLOGIES AG      N' 
         #So to make the company name as pretty as possible we have to find anre remove trailin letters ad numbers
-        comp_name = clean_comp_name(comp_name)
+        comp_name = clean_comp_name(comp_name) #could add more suffixes for cleaner names, lots of manual work or pure LLM thing, for later #To DO
         return data.to_dict('records'), comp_name, ticker, f'Company Name: {comp_name}', metadata
     except Exception:
         return [], None, None, f'Invalid: {normed_stock_input} is not a valid ticker or ISIN', None

@@ -16,7 +16,7 @@ def isin_ticker_to_ticker(ticker_isin:str):
 
 _stock_cache = TTLCache(maxsize=10, ttl= 600)    
 @cached(_stock_cache) 
-def prepare_stock_data(ticker):
+def prepare_stock_data(ticker:str):
     '''Uses a Ticker, NOT ISIN to download the stock data and preprocesses it into the standard format expected by other functions'''
     
     data = yf.download(f'{ticker}', period = '5y')
@@ -35,7 +35,7 @@ def get_stock_metadata(ticker):
 
 
 def decode_records_data(data_records):
-    '''uses the data saved as 'records' and decodes them int othe standard format of hte app.
+    '''uses the data saved as 'records' and decodes them int other standard format of hte app.
     this is needed for cashed data. '''
     
     data = pd.DataFrame(data_records)

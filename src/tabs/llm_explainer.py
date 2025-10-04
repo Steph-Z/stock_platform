@@ -55,10 +55,12 @@ sidebar_llm = dbc.Col([
                         id="llm_main_daterange",
                         min_date_allowed=five_years_ago,
                         max_date_allowed=today,
-                        start_date= None,
+                        start_date= five_years_ago,
                         display_format="DD.MM.YYYY",
-                        end_date= None,
-                        style={"margin-bottom": "1rem"}
+                        end_date= today,
+                        with_portal=True,
+                        style={"margin-bottom": "1rem",
+                                "width": "70%"}
                     )])]),
 
                 html.Label("Focus on detail period:"),
@@ -78,7 +80,11 @@ sidebar_llm = dbc.Col([
                     dcc.DatePickerRange(
                         id="llm_detail_daterange",
                         display_format="DD.MM.YYYY",
-                        style={"margin-top": "1rem"}
+                        with_portal=True,
+                        min_date_allowed=five_years_ago,
+                        max_date_allowed=today,
+                        style={"margin-top": "1rem",
+                               "width": "67.5%"}
                     ),
                     id="llm_detail_container"
                 ),
@@ -299,6 +305,6 @@ def prompt_injection(button_fire, plot_range, data, comp_name, focus_setting, fo
     prevent_initial_call=True
 )
 def call_llm(prompt):
-    #output = '### Analysis of Tesla'
+
     output = run_deepseek(prompt, max_tokens = 500)
     return output

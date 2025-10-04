@@ -1,3 +1,7 @@
+#Files contains the Landing page Text and accordion items
+#No dynamic callbacks here 
+
+
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 from utils.config import flatly_colors
