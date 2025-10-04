@@ -55,9 +55,9 @@ sidebar_llm = dbc.Col([
                         id="llm_main_daterange",
                         min_date_allowed=five_years_ago,
                         max_date_allowed=today,
-                        start_date= None,
+                        start_date= five_years_ago,
                         display_format="DD.MM.YYYY",
-                        end_date= None,
+                        end_date= today,
                         style={"margin-bottom": "1rem"}
                     )])]),
 
@@ -299,6 +299,6 @@ def prompt_injection(button_fire, plot_range, data, comp_name, focus_setting, fo
     prevent_initial_call=True
 )
 def call_llm(prompt):
-    #output = '### Analysis of Tesla'
+
     output = run_deepseek(prompt, max_tokens = 500)
     return output

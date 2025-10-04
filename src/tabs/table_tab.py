@@ -11,7 +11,7 @@ from utils.config import flatly_colors
 
 
 
-
+#general layout of the table tab
 table_layout = html.Div(
     [   dbc.Row(html.H5(id='table_headline', className = 'text-success mb-0',  style={"padding": "0.8rem 1.25rem",   "paddingBottom": "1rem"}), style= {'background': flatly_colors['primary'], 'marginLeft': '1px', 'marginRight': '1px'}),
         html.Br(),

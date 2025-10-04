@@ -20,7 +20,7 @@ def run_deepseek(prompt: str, max_tokens: int = 500):
     try: #use exception i case provider has issues/problems
         
         client = InferenceClient(
-            provider="novita",
+            provider="novita", #relatively cheap provider
             api_key=api_key,
         )
         completion = client.chat.completions.create(

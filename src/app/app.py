@@ -1,7 +1,7 @@
 #For an easy workflow use Strg + g and then Strg +0 to collapse all blocks
 #This way it is easy to navigate each file 
 #This is the main entry for local development.
-
+#File contains the Navbar, side navigation logic, data retrieval and global variables used to store information
 #Imports
 from dash import Dash, dcc, html, Input, Output, State
 import dash_bootstrap_components as dbc
