@@ -58,7 +58,9 @@ sidebar_llm = dbc.Col([
                         start_date= five_years_ago,
                         display_format="DD.MM.YYYY",
                         end_date= today,
-                        style={"margin-bottom": "1rem"}
+                        with_portal=True,
+                        style={"margin-bottom": "1rem",
+                                "width": "70%"}
                     )])]),
 
                 html.Label("Focus on detail period:"),
@@ -78,7 +80,11 @@ sidebar_llm = dbc.Col([
                     dcc.DatePickerRange(
                         id="llm_detail_daterange",
                         display_format="DD.MM.YYYY",
-                        style={"margin-top": "1rem"}
+                        with_portal=True,
+                        min_date_allowed=five_years_ago,
+                        max_date_allowed=today,
+                        style={"margin-top": "1rem",
+                               "width": "67.5%"}
                     ),
                     id="llm_detail_container"
                 ),
