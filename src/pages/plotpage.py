@@ -10,7 +10,7 @@ import datetime as dt
 import numpy as np
 
 from utils.isin_ticker_checkups import check_isin_ticker_input, input_case_insensitive, remove_dashes
-from utils.plots import plot_stock_chart
+from utils.plots import plot_stock_chart, add_moving_average_traces
 from utils.transforms import decode_records_data, add_currency_information
 from utils.config import flatly_colors
 from tabs.table_tab import table_layout
@@ -94,6 +94,40 @@ sidebar = html.Div(
                        labelStyle= {'margin-right': '8px'},
                        style= {'font-size': 14}),
         html.Hr(className="my-1"),
+        html.Label("Add Moving Averages (5 - 200):"),
+        dbc.Row([
+            dbc.Col(
+                dbc.Input(
+                    id="ma_input_1",
+                    type="number",
+                    min=5,
+                    max=200,
+                    pattern = "[0-9]*",
+                    step=1,
+                    placeholder="MA 1",
+                    debounce = True,
+                    style={"width": "60%", "fontSize": "14px"}
+                ),
+                width=6
+            ),
+            dbc.Col(
+                dbc.Input(
+                    id="ma_input_2",
+                    type="number",
+                    min=5,
+                    max=200,
+                    pattern = "[0-9]*",
+                    step=1,
+                    debounce = True,
+                    placeholder="MA 2",
+                    style={"width": "60%", "fontSize": "14px"}
+                ),
+                width=6
+            )
+        ], className="g-1"),
+        html.Hr(className="my-1"),      
+        
+        
         html.Label("Example Tickers/ ISIN's:", className="mt-1 fw-bold"),
         html.Ul([
             html.Li([html.B("Apple"), ": AAPL or US0378331005"]),
@@ -103,10 +137,10 @@ sidebar = html.Div(
             html.Li([html.B("SAP"), ": SAP.DE or DE0007164600"]),
             html.Li([html.B("Infineon"), ": IFX.DE or DE0006231004"]),
             html.Li([html.B("ASML"), ": ASML or NL0010273215"])
-], style={"fontSize": "14px", "paddingLeft": "1rem"}),
-        html.Label('Try to break the input system by using weird spacings or similar. Let me know if I missed something!')
-        
-        
+], style={"fontSize": "14px", "paddingLeft": "1rem"})
+        # In an early Version of the app the user was prompted to break the system;
+        # This is now in the past to provide a more professional experience:
+        # html.Label('Try to break the input system by using weird spacings or similar. Let me know if I missed something!')
     ],
     style={
     "color": "white",
@@ -171,7 +205,7 @@ layout = dbc.Container([
 
 #Callback to update the plot bassed on the selected stock and data 
 @callback(
-    Output('stocklineplot', 'figure'),
+    Output('stocklineplot', 'figure', allow_duplicate= True),
     Output('plot_headline', 'children'),
     Input('metadata', 'data'),
     Input('axis_scaling', 'value'),
@@ -181,7 +215,8 @@ layout = dbc.Container([
     Input('chart-type-input', 'value'),
     Input('plot_range', 'data'),
     Input('stocklineplot', 'relayoutData'),
-    State('stocklineplot', 'figure')
+    State('stocklineplot', 'figure'),
+    prevent_initial_call='initial_duplicate'
 )
 
 def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,ticker, chart_type, range_dict, relayout ,figure_old):
@@ -227,9 +262,9 @@ def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,
         #get mins and max in visible range and scale accordingly
         df_shown = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
         if axis_type.lower() == 'log':
-            fig.update_yaxes(range = [np.log10(df_shown['Close'].min()*0.95), np.log10(df_shown['Close'].max()*1.05)])
+            fig.update_yaxes(range = [np.log10(df_shown['Close'].min()*0.92), np.log10(df_shown['Close'].max()*1.05)])
         else:
-            fig.update_yaxes(range = [df_shown['Close'].min()*0.95, df_shown['Close'].max()*1.05])
+            fig.update_yaxes(range = [df_shown['Close'].min()*0.92, df_shown['Close'].max()*1.05])
                          
     fig.update_layout(meta={"chart_type": chart_type, 'name_comp': stock_input_value, 'axis_type': axis_type}) #so we store the chart type of a figure to prevent not needed updates
     #fig.add_trace(go.Scatter(x = df['Date'], y =df['Close'].rolling(100).mean(), mode = 'lines', line = dict(color = flatly_colors['light']), name= f'MA: {100}'))
@@ -306,6 +341,29 @@ def update_plot_range_on_mouse(relayout):
 
     #if x axis is not changed 
     raise PreventUpdate
+#Callbacks to add a moving average to the plot
+
+
+
+@callback(
+    Output('stocklineplot', 'figure',allow_duplicate=True),
+    Input('ma_input_1', 'value'),
+    Input('ma_input_2', 'value'),
+    Input('stockdata', 'data'),
+    Input('stocklineplot', 'figure'),
+    prevent_initial_call = True
+)
+
+def add_moving_average(ma_1, ma_2, df, fig):
+    '''In case the user inputs a moving average window, calculate it and return the updated figure'''
+    
+    df = decode_records_data(df)
+    fig = go.Figure(fig)
+    fig = add_moving_average_traces(fig, df, ma_1, ma_2) #function handles non input of ma_1 and ma_2
+    
+    return fig
+    
+    
 
 @callback(
     Output("tab-content", "children"),
