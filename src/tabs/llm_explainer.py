@@ -49,7 +49,7 @@ sidebar_llm = dbc.Col([
                 html.Div([
                     dbc.Row([
                     html.Label([
-                            "Select Timeframe (updates the plot, Max 3 months for LLM explanation):"
+                            "Select Timeframe (updates the plot and is updated by the plot, Max. 3 months for LLM explanation):"
                         ]),
                     dcc.DatePickerRange(
                         id="llm_main_daterange",

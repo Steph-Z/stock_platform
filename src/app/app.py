@@ -211,7 +211,8 @@ def retrieve_stock_data( n_clicks, stock_input_value):
         ticker = isin_ticker_to_ticker(normed_stock_input) #ToDo more robust
         data = prepare_stock_data(ticker) #To do more robust
         metadata = get_stock_metadata(ticker)
-        print(ticker)
+        #print(ticker)
+        
         
         if data.empty:            
             return [], None, None, f'Input: {normed_stock_input} may exist, but no data is available', None
