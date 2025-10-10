@@ -232,7 +232,7 @@ def update_stock_plot(metadata ,axis_type,stock_input_value, stock_data_records,
             fig.update_yaxes(range = [df_shown['Close'].min()*0.95, df_shown['Close'].max()*1.05])
                          
     fig.update_layout(meta={"chart_type": chart_type, 'name_comp': stock_input_value, 'axis_type': axis_type}) #so we store the chart type of a figure to prevent not needed updates
-
+    #fig.add_trace(go.Scatter(x = df['Date'], y =df['Close'].rolling(100).mean(), mode = 'lines', line = dict(color = flatly_colors['light']), name= f'MA: {100}'))
     return fig, f'{stock_input_value}'
 
 

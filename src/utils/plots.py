@@ -20,20 +20,27 @@ def plot_stock_chart(data: pd.DataFrame, comp_name:str, ticker:str, metadata , c
                 
         if chart_type == 'line': 
 
-                fig = px.line(data_frame= data,
-                        x= 'Date',
-                        y = 'Close',
-                        labels = {'Close': y_name, 'Date': 'Date'}
-                        )
+                fig = go.Figure(data= [go.Scatter(
+                                x = data['Date'],
+                                 y =data['Close'],
+                                 mode = 'lines',
+                                 line = dict(color = flatly_colors['warning']),
+                                 name= "Close price",
+                                 showlegend=True)])
+                
                 fig.update_traces(line=dict(color=flatly_colors['success']))
         else:
                 fig = go.Figure( data=[go.Candlestick(x=data['Date'],
                         open=data['Open'],
                         high=data['High'],
                         low=data['Low'],
-                        close=data['Close'])])
+                        close=data['Close'],
+                        name= "Daily candles",
+                        showlegend=True)])
                 fig.update_layout(xaxis_rangeslider_visible=False)
 
         fig.update_layout(xaxis=dict(tickformat="%d.%m.%Y"))
+        
+        
 
         return fig
