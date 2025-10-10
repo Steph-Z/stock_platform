@@ -34,8 +34,8 @@ Kommentare im Code aber auch die Zusammenarbeit mit internationalen Kolleg:innen
 explain_text_engl = """ 
 ### Hello dear visitor!
 
-My name is Stephan and I am a recent graduate with a a Master's Degree in Data Science.
-This side/dashboard is a learning project to strengthen my skills in software engineering best practices for Data Science and AI Engineering.  
+My name is Stephan and I am a recent graduate with a Master's Degree in Data Science.
+This side/dashboard is a learning project to strengthen my skills in software engineering best practices for data science and AI engineering.  
 Use the menus below to find out more about the project. The code of the project (incl. tests) is publicly available on my GitHub under:
 
 https://github.com/Steph-Z/stock_platform 
@@ -108,9 +108,11 @@ I’m actively working on expanding the dashboard’s functionality.
 Here are the next major improvements I plan to implement:
 
 **Enhanced testing**  
+
 Add full integration tests that emulate user inputs across the dashboard.
 
 **Metrics**
+
 Add a comprehensive table with metrics such as volatility in the tab. 
 Add custom timeframes for the metrics next to the standard
 
